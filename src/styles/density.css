@@ -1,0 +1,7 @@
+/* Density: tighter rows and less whitespace. Placeholder values until the DOM survey shows what
+   actually controls row height in the message list and folder pane. */
+
+[data-overlook-features~="density"] [data-overlook~="folder-item"] {
+  min-height: 0 !important;
+  padding-block: 1px !important;
+}

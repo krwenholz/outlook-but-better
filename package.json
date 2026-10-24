@@ -1,0 +1,27 @@
+{
+  "name": "overlook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chrome extension that makes Outlook on the web tolerable",
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.2",
+    "@types/chrome": "^0.3.6",
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "jsdom": "^30.1.3",
+    "playwright": "1.63.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

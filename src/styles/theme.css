@@ -1,0 +1,11 @@
+/* Theme: a calmer, flatter, more typographic look (Phase 4). All tuning happens through these
+   custom properties. Must work with Outlook's own light and dark modes, not fight them. */
+
+[data-overlook-features~="theme"] {
+  --overlook-font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+}
+
+[data-overlook-features~="theme"] [data-overlook~="message-list"],
+[data-overlook-features~="theme"] [data-overlook~="folder-pane"] {
+  font-family: var(--overlook-font) !important;
+}

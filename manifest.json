@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Overlook",
+  "version": "0.1.0",
+  "description": "Fastmail-style keyboard shortcuts, less clutter, and a calmer look for Outlook on the web.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://outlook.cloud.microsoft/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
+}

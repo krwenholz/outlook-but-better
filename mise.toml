@@ -1,0 +1,54 @@
+[tools]
+node = "24"
+
+[env]
+_.path = ["node_modules/.bin"]
+
+[tasks.install]
+description = "Install npm dependencies"
+run = "npm install"
+
+[tasks.build]
+description = "Bundle the extension into dist/ (load unpacked from there)"
+run = "node scripts/build.ts"
+
+[tasks.dev]
+description = "Rebuild dist/ on change"
+run = "node scripts/build.ts --watch"
+
+[tasks.test]
+description = "Run unit tests"
+run = "vitest run --project unit"
+
+[tasks.e2e]
+description = "Load dist/ into Chromium against fake and scrubbed Outlook pages"
+depends = ["build"]
+run = "vitest run --project e2e"
+
+[tasks."e2e:setup"]
+description = "Download the Chromium build Playwright needs (once per machine)"
+run = "playwright install chromium"
+
+[tasks.typecheck]
+description = "Type-check without emitting"
+run = "tsc --noEmit"
+
+[tasks.lint]
+description = "Lint and check formatting"
+run = "biome check ."
+
+[tasks.fmt]
+description = "Apply lint fixes and formatting"
+run = "biome check --write ."
+
+[tasks.check]
+description = "Everything CI would run"
+depends = ["lint", "typecheck", "test", "e2e"]
+
+[tasks.scrub]
+description = "Scrub a saved Outlook page into a committable fixture: mise run scrub <in.html> <out.html>"
+run = "node scripts/scrub-fixture.ts"
+
+[tasks.health]
+description = "Run the selector health check against a saved page: mise run health <page.html>"
+run = "node scripts/health.ts"

@@ -1,0 +1,159 @@
+:host {
+  all: initial;
+  --ol-bg: #fff;
+  --ol-fg: #1f1f1f;
+  --ol-muted: #6b6b6b;
+  --ol-accent: #2f6fde;
+  --ol-border: rgb(0 0 0 / 12%);
+  --ol-shadow: 0 8px 32px rgb(0 0 0 / 18%);
+  font:
+    13px / 1.4 system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --ol-bg: #262626;
+    --ol-fg: #ececec;
+    --ol-muted: #a0a0a0;
+    --ol-accent: #7aa7ff;
+    --ol-border: rgb(255 255 255 / 14%);
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.toast,
+.hint,
+.health {
+  position: fixed;
+  z-index: 2147483647;
+  background: var(--ol-bg);
+  color: var(--ol-fg);
+  border: 1px solid var(--ol-border);
+  border-radius: 6px;
+  box-shadow: var(--ol-shadow);
+  padding: 6px 10px;
+}
+
+.toast {
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hint {
+  bottom: 24px;
+  right: 24px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.health {
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-color: #d97706;
+}
+
+.close {
+  all: unset;
+  cursor: pointer;
+  color: var(--ol-muted);
+  padding: 0 2px;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  background: rgb(0 0 0 / 25%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 12vh;
+}
+
+.panel {
+  background: var(--ol-bg);
+  color: var(--ol-fg);
+  border-radius: 10px;
+  box-shadow: var(--ol-shadow);
+  width: min(520px, 90vw);
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.help {
+  padding: 16px 20px;
+}
+
+.help h2 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.help table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.help td {
+  padding: 3px 0;
+}
+
+.keys {
+  width: 7em;
+}
+
+kbd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  border: 1px solid var(--ol-border);
+  border-radius: 4px;
+  padding: 0 5px;
+}
+
+.palette input {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border-bottom: 1px solid var(--ol-border);
+}
+
+.palette ul {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.palette li {
+  padding: 5px 16px;
+  cursor: pointer;
+}
+
+.palette li[aria-selected="true"] {
+  background: color-mix(in srgb, var(--ol-accent) 16%, transparent);
+}
+
+.palette li .path {
+  color: var(--ol-muted);
+  margin-left: 6px;
+}
+
+.palette mark {
+  background: none;
+  color: var(--ol-accent);
+  font-weight: 600;
+}
+
+.palette .empty {
+  color: var(--ol-muted);
+  cursor: default;
+}

@@ -1,0 +1,10 @@
+/* Declutter: one rule per toggle in settings.ts. Target only data-overlook tokens set by
+   selectors.ts, never Outlook's own markup. */
+
+[data-overlook-features~="hide-copilot"] [data-overlook~="copilot"],
+[data-overlook-features~="hide-promo-banner"] [data-overlook~="promo-banner"],
+[data-overlook-features~="hide-external-tag"] [data-overlook~="external-tag"],
+[data-overlook-features~="hide-app-rail"] [data-overlook~="app-rail"],
+[data-overlook-features~="hide-ribbon"] [data-overlook~="ribbon"] {
+  display: none !important;
+}
