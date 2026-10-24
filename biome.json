@@ -6,7 +6,7 @@
       "!dist",
       "!node_modules",
       "!test/fixtures",
-      "!test/e2e/*.html",
+      "!test/e2e/*.html", "!docs/*.html",
       "!fixtures-raw",
       "!.scratch"
     ]
