@@ -5,7 +5,9 @@ import * as esbuild from "esbuild";
 
 const watch = process.argv.includes("--watch");
 const outdir = "dist";
-const styles = ["declutter", "density", "theme"].map((name) => `src/styles/${name}.css`);
+const styles = ["palettes", "layouts", "declutter", "density"].map(
+  (name) => `src/styles/${name}.css`,
+);
 const staticFiles = ["manifest.json", "src/options/options.html", ...styles];
 
 /** Copies static files and concatenates the page stylesheets into content.css. */

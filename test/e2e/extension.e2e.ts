@@ -45,6 +45,24 @@ describe("extension on the inbox fixture", () => {
     expect(await page.locator('[data-overlook~="upsell"]').isVisible()).toBe(false);
   });
 
+  it("recolours Outlook through its own palette variables", async () => {
+    const folderPaneBackground = () =>
+      page.evaluate(() => {
+        const pane = document.querySelector('[data-overlook~="folder-pane"]');
+        return pane ? getComputedStyle(pane).backgroundColor : null;
+      });
+    await page.evaluate(() => {
+      document.documentElement.dataset.overlookPalette = "solarized";
+      document.documentElement.dataset.overlookMode = "dark";
+    });
+    await expect.poll(folderPaneBackground).toBe("rgb(7, 54, 66)"); // Solarized base02
+    await page.evaluate(() => {
+      document.documentElement.dataset.overlookMode = "auto";
+      document.documentElement.dataset.overlookOutlookScheme = "light";
+    });
+    await expect.poll(folderPaneBackground).toBe("rgb(238, 232, 213)"); // Solarized base2
+  });
+
   it("archives by clicking Outlook's own Archive button", async () => {
     await page.keyboard.press("y");
     expect(await actions(page)).toEqual(["click:Archive"]);

@@ -46,8 +46,17 @@ description = "Everything CI would run"
 depends = ["lint", "typecheck", "test", "e2e"]
 
 [tasks.scrub]
-description = "Scrub a saved Outlook page into a committable fixture: mise run scrub <in.html> <out.html>"
+description = "Scrub a saved Outlook page into a fixture: mise run scrub <saved.html> test/fixtures --name inbox"
 run = "node scripts/scrub-fixture.ts"
+
+[tasks."fixtures:assets"]
+description = "Download the Outlook stylesheets fixtures reference (gitignored; for screenshots)"
+run = "node scripts/fetch-fixture-assets.ts"
+
+[tasks.screenshots]
+description = "Render the inbox fixture under each look into docs/screenshots/ (optionally: names)"
+depends = ["build", "fixtures:assets"]
+run = "node scripts/screenshots.ts"
 
 [tasks.health]
 description = "Run the selector health check against a saved page: mise run health <page.html>"

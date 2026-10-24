@@ -98,6 +98,24 @@ export const SELECTORS = {
     tag: "reading-pane",
   },
 
+  messageBody: {
+    candidates: ['[role="document"][aria-label="Message body"]'],
+    expect: "sometimes",
+    within: "readingPane",
+    tag: "message-body",
+    all: true,
+  },
+
+  infoBar: {
+    // Notices above a message ("You replied on…"); their text sits in an element whose id starts
+    // with "infoBar". Outlook paints them with inline colours.
+    candidates: ['[role="group"]:has(> * > [id^="infoBar"])'],
+    expect: "sometimes",
+    within: "readingPane",
+    tag: "info-bar",
+    all: true,
+  },
+
   // --- Clutter (each hideable entry gets a toggle in settings.ts) ---
   upsellBanner: {
     candidates: ['[data-app-section="UpsellBannerSection"]'],
@@ -152,6 +170,14 @@ export const SELECTORS = {
     within: "messageList",
     tag: "row-action",
     union: true,
+  },
+  appBanner: {
+    // Fluent's static "fui-MessageBar" class is part of its public styling API, not generated;
+    // nothing else marks these. Scoped to bars across the top of the app, not inside messages.
+    candidates: ['#mainApp > div > [role="group"].fui-MessageBar'],
+    expect: "sometimes",
+    tag: "app-banner",
+    all: true,
   },
   copilot: {
     // UNVERIFIED: no Copilot surfaces in the Oct 2026 capture.

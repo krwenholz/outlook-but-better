@@ -2,6 +2,8 @@
    selectors.ts, never Outlook's own markup. */
 
 [data-overlook-features~="hide-upsell"] [data-overlook~="upsell"],
+[data-overlook-features~="hide-app-banners"] [data-overlook~="app-banner"],
+[data-overlook-features~="hide-info-bars"] [data-overlook~="info-bar"],
 [data-overlook-features~="hide-copilot"] [data-overlook~="copilot"],
 [data-overlook-features~="hide-header-extras"] [data-overlook~="header-extra"],
 [data-overlook-features~="hide-rail-extras"] [data-overlook~="rail-extra"],

@@ -1,6 +1,8 @@
 // Loads the built extension into Chromium and serves a fixture at an Outlook URL, so the content
 // script runs exactly as it would on the real site. No network: every other request is aborted.
+// Also used by scripts/screenshots.ts.
 
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { type BrowserContext, chromium, type Page } from "playwright";
@@ -23,14 +25,19 @@ export async function openFixture(context: BrowserContext, name: string): Promis
   await page.route("**/*", async (route) => {
     const url = route.request().url();
     if (url === OUTLOOK_URL) {
+      const html = await readFile(path.join(FIXTURES, `${name}.html`), "utf8");
+      const shim = '<link rel="stylesheet" href="shim.css">';
       return route.fulfill({
-        contentType: "text/html",
-        body: await readFile(path.join(FIXTURES, `${name}.html`)),
+        contentType: "text/html; charset=utf-8",
+        body: html.replace("</head>", `${shim}</head>`),
       });
     }
+    if (url === `${OUTLOOK_URL}shim.css`)
+      return route.fulfill({ path: path.join(FIXTURES, "shim.css") });
     if (url.startsWith(`${OUTLOOK_URL}assets/`)) {
+      // Fetched by `mise run fixtures:assets`; absent in CI, where pages just render unstyled.
       const file = path.join(FIXTURES, "assets", path.basename(new URL(url).pathname));
-      return route.fulfill({ path: file });
+      return existsSync(file) ? route.fulfill({ path: file }) : route.fulfill({ status: 404 });
     }
     return route.abort();
   });

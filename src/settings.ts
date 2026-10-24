@@ -32,6 +32,16 @@ export const FEATURES = {
   },
   keymap: { label: "Fastmail-style keyboard shortcuts", group: "Keyboard", default: true },
   "hide-upsell": { label: "Upgrade and 'try the new…' banners", group: "Declutter", default: true },
+  "hide-app-banners": {
+    label: "Notices across the top of Outlook (pop-up, sign-in and storage reminders)",
+    group: "Declutter",
+    default: false,
+  },
+  "hide-info-bars": {
+    label: "Notices above an open message ('You replied on…', 'Extra line breaks removed')",
+    group: "Declutter",
+    default: false,
+  },
   "hide-copilot": { label: "Copilot buttons and panels", group: "Declutter", default: true },
   "hide-header-extras": {
     label: "Teams and My Day buttons in the header",

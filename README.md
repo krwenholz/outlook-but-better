@@ -17,6 +17,22 @@ mise run build        # writes dist/
 Then open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, and pick `dist/`.
 Open Outlook and press `?` for the shortcut list. Options live on the extension's details page.
 
+## Looks
+
+Pick colours, light/dark and a layout on the options page. Palettes recolour Outlook through
+its own colour variables, so everything matches, and "Follow Outlook" tracks its dark mode.
+
+|                                                                                    |                                                                              |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| ![Solarized light, calm](docs/screenshots/solarized-light-calm.png)                | ![Solarized dark, calm](docs/screenshots/solarized-dark-calm.png)            |
+| ![Fastmail palette, Fastmail layout](docs/screenshots/fastmail-light-fastmail.png) | ![Fastmail dark, calm](docs/screenshots/fastmail-dark-calm.png)              |
+| ![Base16 dark, Fastmail layout](docs/screenshots/base16-dark-fastmail.png)         | ![Base16 light, Fastmail layout](docs/screenshots/base16-light-fastmail.png) |
+| ![Paper, focus](docs/screenshots/paper-light-focus.png)                            | ![Solarized dark, focus](docs/screenshots/solarized-dark-focus.png)          |
+
+Screenshots come from a scrubbed saved page (`mise run screenshots`), so text is placeholder
+words and icons are missing. The Fastmail and Focus layouts assume Outlook's "Reading pane:
+Hide" setting.
+
 ## Develop
 
 `mise run dev` rebuilds on change (reload the extension afterwards). `mise run check` runs

@@ -4,3 +4,5 @@ dist/
 # Raw saved Outlook pages contain real mail. Never commit them; scrub into test/fixtures/ instead.
 fixtures-raw/
 .scratch/
+# Microsoft stylesheets for fixtures, fetched by `mise run fixtures:assets`. Not ours to commit.
+test/fixtures/assets/

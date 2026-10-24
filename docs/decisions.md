@@ -2,6 +2,50 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-10-24: The repo may go public, so nothing Microsoft-owned or personal is committed
+
+- Outlook's stylesheets are listed in `test/fixtures/assets.json` and downloaded from Microsoft's
+  CDN by `mise run fixtures:assets` into a gitignored folder. Icons are dropped.
+- Fixtures go through `scripts/scrub-fixture.ts`; a gitignored `fixtures-raw/denylist.txt` makes
+  the scrub fail if any listed term (employer, names) survives.
+- Commit `c5ad72d` briefly carried the stylesheets in `test/fixtures/assets/`. Purge it from
+  history (e.g. `git filter-repo --path test/fixtures/assets --invert-paths`) before going
+  public.
+
+## 2026-10-24: Fixture shim for screenshots
+
+Saved pages lose Fluent's runtime CSS-in-JS rules, so only ~25% of element classes have styles.
+`test/fixtures/shim.css` (fixture-only, never shipped) approximates the few that matter: pane
+geometry, ribbon rows, hidden portals and tooltip text. Icon glyphs are hidden because Outlook's
+icon-font codepoints don't match the public `@fluentui/react-icons` fonts. The DevTools snippet
+in `docs/capturing-pages.md` captures runtime rules too, which should make the shim unnecessary.
+
+## 2026-10-24: Palettes recolour Outlook through its own variables
+
+Outlook paints itself from the Fabric palette on `<html>` (`--white`, `--neutral*`, `--theme*`)
+and Fluent v9 tokens (`--colorNeutral*`, `--colorBrand*`). Palettes set Overlook tokens
+(`--ol-*`) and map them onto both with `!important`, so surfaces Overlook never tags still match.
+Fluent re-declares tokens on provider elements, targeted via its public `fui-FluentProvider`
+class. Dark palettes show email bodies as a light "letter" because bodies carry their own colours.
+
+## 2026-10-24: Layouts never hide the reading pane
+
+Hiding Outlook's reading pane with CSS would make opened messages invisible. The list-first
+layouts (fastmail, focus) instead pair with Outlook's own "Reading pane: Hide" setting; the
+screenshot script simulates that setting.
+
+## 2026-10-24: Drive Outlook's buttons first, keys second
+
+React honours `element.click()`, while synthetic key events are still unverified. Actions with a
+ribbon button (archive, delete, move, pin, undo, refresh) click it and fall back to Outlook's
+Gmail-mode key when the button is absent. Read/unread uses Shift+I/Shift+U, since the ribbon
+only has a toggle.
+
+## 2026-10-24: `m` opens Outlook's own "Move to" picker
+
+Outlook's picker already has folder search. The folder palette handles `g` only; moving from
+the palette can come later if Outlook's picker proves too slow.
+
 ## 2026-10-24: Scaffolded before Phase 0
 
 PLAN.md says to finish the policy check and DOM survey first. Kyle asked for the scaffold now. All

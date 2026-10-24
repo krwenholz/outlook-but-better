@@ -1,7 +1,9 @@
 // Turns a saved Outlook page into a fixture that is safe to commit.
 // Usage: node scripts/scrub-fixture.ts <saved.html> <out-dir> [--name inbox]
 //
-// Writes <out-dir>/<name>.html plus <out-dir>/assets/ (stylesheets and reviewed icons only).
+// Writes <out-dir>/<name>.html and adds the page's stylesheets to <out-dir>/assets.json. The
+// stylesheets themselves are Microsoft's, so they are never committed: `mise run fixtures:assets`
+// downloads them from Outlook's public CDN into the gitignored <out-dir>/assets/.
 //
 // What survives: structure, roles, classes, semantic data-* values, attribute values the selector
 // registry matches on, and text made up entirely of Outlook UI vocabulary ("Inbox - 9 items").
@@ -13,7 +15,7 @@
 
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { JSDOM } from "jsdom";
@@ -72,8 +74,10 @@ const KEEP_ATTRIBUTES = new Set(
 );
 const URL_ATTRIBUTES = new Set(["src", "srcset", "poster", "background", "action", "formaction"]);
 
-/** Local assets from the saved page that may be published (Microsoft UI icons and stylesheets). */
-const SAFE_ASSET = /\.(css|svg)$|^(pdf|Insights_System_Mono_[\w]+)\.png$/;
+/** Where Outlook serves its stylesheets; scripts/fetch-fixture-assets.ts downloads from here. */
+export const OUTLOOK_CDN = "https://res.public.onecdn.static.microsoft/owamail/hashed-v1/scripts/";
+/** Saved assets the fixture may reference: Outlook's stylesheets, fetched from its CDN. */
+const SAFE_ASSET = /^owa\.[\w.]+\.css$/;
 
 const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
 /** "flags@2x.png" looks like an address but is an image file. */
@@ -214,8 +218,10 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
   const localAsset = (url: string): string | null => {
     const decoded = decodeURIComponent(url).replace(/^\.\//, "");
     const dir = options.assetDir;
-    if (!dir || !decoded.startsWith(`${dir}/`)) return null;
-    const file = decoded.slice(dir.length + 1);
+    let file: string;
+    if (dir && decoded.startsWith(`${dir}/`)) file = decoded.slice(dir.length + 1);
+    else if (decoded.startsWith(OUTLOOK_CDN)) file = decoded.slice(OUTLOOK_CDN.length);
+    else return null;
     if (!SAFE_ASSET.test(file)) return null;
     assets.add(file);
     return `assets/${file}`;
@@ -224,8 +230,14 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
   for (const node of document.querySelectorAll(DROP_ELEMENTS)) node.remove();
   for (const link of document.querySelectorAll("link[rel=stylesheet]")) {
     const href = localAsset(link.getAttribute("href") ?? "");
-    if (href) link.setAttribute("href", href);
-    else link.remove();
+    if (!href) {
+      link.remove();
+      continue;
+    }
+    link.setAttribute("href", href);
+    // CORS attributes make local (file://) loads fail.
+    link.removeAttribute("crossorigin");
+    link.removeAttribute("integrity");
   }
 
   const walker = document.createTreeWalker(
@@ -235,11 +247,18 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
   const comments: Node[] = [];
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (node.nodeType === node.COMMENT_NODE) comments.push(node);
-    else if (node.parentElement?.tagName !== "STYLE" && node.textContent?.trim()) {
+    else if (node.parentElement?.tagName === "STYLE") {
+      // Keep the rules, but not external images they might point at (data: URIs are inline).
+      node.textContent = (node.textContent ?? "").replace(/url\((?!["']?data:)[^)]*\)/g, "none");
+    } else if (node.textContent?.trim()) {
       node.textContent = fakeText(node.textContent);
     }
   }
   for (const comment of comments) comment.parentNode?.removeChild(comment);
+  // A <noscript> in <head> parses into stray text at the top of <body>; it never renders live.
+  for (const node of [...document.body.childNodes]) {
+    if (node.nodeType === node.TEXT_NODE) node.remove();
+  }
 
   for (const element of document.querySelectorAll("*")) {
     if (element.tagName === "LINK") continue;
@@ -319,15 +338,15 @@ if (import.meta.main) {
   const assetDir = raw.match(/(?:href|src)="\.\/([^"/]+_files)\//)?.[1];
   const { html, assets } = scrubHtml(raw, { assetDir, denylist });
 
-  await mkdir(path.join(outDir, "assets"), { recursive: true });
-  const srcDir = path.join(path.dirname(input), assetDir ? decodeURIComponent(assetDir) : "");
-  for (const file of assets) {
-    const target = path.join(outDir, "assets", file);
-    await copyFile(path.join(srcDir, file), target);
-    assertClean(await readFile(target, "utf8"), denylist);
-  }
+  const manifest = path.join(outDir, "assets.json");
+  const known: string[] = existsSync(manifest) ? JSON.parse(await readFile(manifest, "utf8")) : [];
+  const all = [...new Set([...known, ...assets])].sort();
+  await writeFile(manifest, `${JSON.stringify(all, null, 2)}\n`);
   const output = path.join(outDir, `${values.name}.html`);
   await writeFile(output, html);
-  console.log(`wrote ${output} and ${assets.length} assets (denylist: ${denylist.length} terms)`);
+  console.log(`wrote ${output}; ${assets.length} stylesheets listed in ${manifest}`);
+  console.log(
+    `denylist: ${denylist.length} terms. Run \`mise run fixtures:assets\` to fetch styles.`,
+  );
   console.log("Skim the output before committing: the scrubber is a safety net, not a guarantee.");
 }

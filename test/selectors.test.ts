@@ -44,6 +44,8 @@ describe("selector registry", () => {
       expect(document.querySelectorAll('[data-overlook~="header-extra"]')).toHaveLength(2);
       expect(document.querySelectorAll('[data-overlook~="rail-extra"]')).toHaveLength(4);
       expect(resolve("messageList")?.getAttribute("data-overlook")).toBe("message-list");
+      expect(document.querySelectorAll('[data-overlook~="info-bar"]')).toHaveLength(3);
+      expect(document.querySelectorAll('[data-overlook~="app-banner"]')).toHaveLength(1);
     });
 
     it("reads mailbox folders without favorites, roots or item counts", () => {

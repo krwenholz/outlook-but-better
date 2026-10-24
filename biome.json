@@ -7,7 +7,8 @@
       "!node_modules",
       "!test/fixtures",
       "!test/e2e/*.html",
-      "!fixtures-raw"
+      "!fixtures-raw",
+      "!.scratch"
     ]
   },
   "formatter": {

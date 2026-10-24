@@ -22,6 +22,9 @@ mise run install
 # a no-op when that build is already present.
 mise exec -- npx playwright install chromium >/dev/null 2>&1 || echo "playwright chromium install failed; e2e may not run" >&2
 
+# Outlook's stylesheets for fixture screenshots (gitignored, fetched from Microsoft's CDN).
+mise run fixtures:assets >/dev/null 2>&1 || echo "fixture stylesheets unavailable; screenshots will be unstyled" >&2
+
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo "export PATH=\"$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\"" >> "$CLAUDE_ENV_FILE"
 fi

@@ -1,0 +1,238 @@
+/* Surfaces and layouts. Everything here targets data-overlook tokens (from selectors.ts) plus
+   plain elements inside them, never Outlook's generated classes.
+
+   Surfaces apply whenever a palette is chosen. Layouts rearrange panes:
+     calm      three panes, quiet chrome
+     fastmail  list first; pair with Outlook's "Reading pane: Hide" setting so a message opens
+               full width, as in Fastmail
+     focus     no app rail or folder pane (use `g` to switch folders), centred content
+   None of them hide the reading pane themselves: when Outlook shows it, it holds the open
+   message. */
+
+:root {
+  --ol-font-ui:
+    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+}
+
+/* --- Surfaces (any palette) --- */
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) body,
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [class*="fui-FluentProvider"] {
+  --fontFamilyBase: var(--ol-font-ui) !important;
+  font-family: var(--ol-font-ui) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="title-bar"],
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="title-bar"]
+  > div {
+  background: var(--ol-bg-chrome) !important;
+  color: var(--ol-fg-chrome) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="title-bar"]
+  :is(div, button, span, label) {
+  background-color: transparent !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="title-bar"]
+  :is(button, label, [role="button"]) {
+  color: var(--ol-fg-chrome) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="title-bar"]
+  input {
+  background: color-mix(in srgb, var(--ol-bg) 92%, var(--ol-bg-chrome)) !important;
+  color: var(--ol-fg-strong) !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  :is([data-overlook~="app-rail"], [data-overlook~="folder-pane"]) {
+  background: var(--ol-bg-alt) !important;
+  border: 0 !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  :is(
+    [data-overlook~="list-pane"],
+    [data-overlook~="message-list"],
+    [data-overlook~="reading-pane"],
+    [data-overlook~="ribbon"]
+  ) {
+  background: var(--ol-bg) !important;
+  border-color: var(--ol-faint) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="ribbon"] {
+  border-bottom: 1px solid var(--ol-faint) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="ribbon"]
+  :is(button, [role="tab"]) {
+  background: transparent !important;
+  color: var(--ol-fg) !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  font: 500 13px / 1.2 var(--ol-font-ui) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="ribbon"]
+  button:hover {
+  background: var(--ol-hover) !important;
+}
+
+/* The compose button reads as Fastmail's: one solid accent pill. */
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="ribbon"]
+  button[aria-label="New mail"] {
+  background: var(--ol-accent) !important;
+  color: var(--ol-accent-fg) !important;
+  padding-inline: 14px !important;
+  font-weight: 600 !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="folder-item"] {
+  color: var(--ol-fg) !important;
+  border-radius: 6px !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="folder-item"]:hover {
+  background: var(--ol-hover) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="message-row"] {
+  color: var(--ol-fg) !important;
+  border-color: var(--ol-faint) !important;
+  box-shadow: none !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="message-row"][aria-selected="true"] {
+  background: var(--ol-selected) !important;
+  border-left-color: var(--ol-accent) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="message-row"]:hover {
+  background: var(--ol-hover) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="message-row"]
+  :is(span, div) {
+  border-color: var(--ol-faint) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="row-avatar"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--ol-accent) 16%, var(--ol-bg)) !important;
+  color: var(--ol-accent) !important;
+  font: 600 12px / 1 var(--ol-font-ui) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="group-header"] {
+  background: transparent !important;
+  color: var(--ol-muted) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="reading-pane"] {
+  color: var(--ol-fg) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"])
+  [data-overlook~="reading-pane"]
+  [role="heading"] {
+  font-family: var(--ol-font-reading, var(--ol-font-ui)) !important;
+  color: var(--ol-fg-strong) !important;
+}
+
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="info-bar"] {
+  background: color-mix(in srgb, var(--ol-accent) 7%, var(--ol-bg)) !important;
+  border-color: var(--ol-faint) !important;
+  color: var(--ol-fg) !important;
+}
+
+/* Email bodies carry their own colours (often a hard-coded white). Dark palettes show them as a
+   light "letter" so they stay readable; light palettes blend them into the page. */
+html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="message-body"] {
+  background: var(--ol-letter-bg) !important;
+  color: var(--ol-letter-fg) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+}
+
+/* --- calm: quiet chrome, airy rows --- */
+html[data-overlook-layout="calm"] [data-overlook~="ribbon-tabs"] {
+  display: none !important;
+}
+
+html[data-overlook-layout="calm"] [data-overlook~="app-rail"] {
+  opacity: 0.75;
+}
+
+html[data-overlook-layout="calm"] [data-overlook~="message-row"] {
+  padding-block: 2px !important;
+}
+
+/* --- fastmail: list first, sidebar with compose, flat toolbar --- */
+html[data-overlook-layout="fastmail"] [data-overlook~="ribbon-tabs"],
+html[data-overlook-layout="fastmail"] [data-overlook~="focused-tabs"],
+html[data-overlook-layout="fastmail"] [data-overlook~="group-header"] {
+  display: none !important;
+}
+
+html[data-overlook-layout="fastmail"] [data-overlook~="list-pane"] {
+  flex: 1 1 auto !important;
+  max-width: none !important;
+  width: auto !important;
+}
+
+html[data-overlook-layout="fastmail"] [data-overlook~="message-row"] {
+  padding-block: 4px !important;
+  border-left: 0 !important;
+  border-bottom: 1px solid var(--ol-faint, transparent) !important;
+}
+
+html[data-overlook-layout="fastmail"] [data-overlook~="folder-pane"] {
+  padding-top: 8px !important;
+}
+
+/* --- focus: content only; folders via the `g` palette --- */
+html[data-overlook-layout="focus"]
+  :is(
+    [data-overlook~="app-rail"],
+    [data-overlook~="folder-pane"],
+    [data-overlook~="ribbon"],
+    [data-overlook~="focused-tabs"],
+    [data-overlook~="header-extra"]
+  ) {
+  display: none !important;
+}
+
+html[data-overlook-layout="focus"] [data-overlook~="list-pane"] {
+  flex: 0 1 760px !important;
+  width: auto !important;
+  max-width: 760px !important;
+  margin-inline: auto !important;
+  border-inline: 1px solid var(--ol-faint, transparent) !important;
+}
+
+html[data-overlook-layout="focus"] [data-overlook~="message-row"] {
+  padding-block: 6px !important;
+  border-left: 0 !important;
+}
