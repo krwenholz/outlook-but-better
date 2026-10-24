@@ -1,7 +1,7 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import type { BrowserContext, Page } from "playwright";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { launch, openPage } from "./harness.ts";
+import { actions, launch, openFixture, recordActions } from "./harness.ts";
 
 let context: BrowserContext;
 let page: Page;
@@ -13,67 +13,74 @@ afterAll(async () => {
   await context?.close();
 });
 
-describe("extension on a fake Outlook page", () => {
+const badge = (p: Page) =>
+  p.evaluate(
+    () =>
+      document.querySelector("overlook-root")?.shadowRoot?.querySelector(".health:not([hidden])")
+        ?.textContent ?? null,
+  );
+
+// Every scrubbed capture must pass the health check.
+const fixtures = (await readdir("test/fixtures")).filter((f) => f.endsWith(".html"));
+describe("scrubbed Outlook fixtures", () => {
+  it.each(fixtures)("%s has no broken selectors", async (file) => {
+    const fixture = await openFixture(context, file.replace(/\.html$/, ""));
+    await fixture.waitForTimeout(300);
+    expect(await badge(fixture)).toBeNull();
+    await fixture.close();
+  });
+});
+
+describe("extension on the inbox fixture", () => {
   beforeEach(async () => {
-    page = await openPage(context, await readFile("test/e2e/fake-outlook.html", "utf8"));
+    page = await openFixture(context, "inbox");
+    await recordActions(page);
   });
 
-  it("applies default settings and hides decluttered elements", async () => {
-    const features = await page.evaluate(() => document.documentElement.dataset.overlookFeatures);
-    expect(features).toContain("hide-copilot");
-    await expect.poll(() => page.locator('[aria-label="Copilot"]').isVisible()).toBe(false);
+  it("hides decluttered elements by default", async () => {
+    await expect.poll(() => page.locator("#owaTeamsBtn_container").isVisible()).toBe(false);
+    await expect
+      .poll(() => page.locator('[data-app-section="UpsellBannerSection"]').count())
+      .toBe(1);
+    expect(await page.locator('[data-overlook~="upsell"]').isVisible()).toBe(false);
   });
 
-  it("translates y into Outlook's archive key as a synthetic event", async () => {
+  it("archives by clicking Outlook's own Archive button", async () => {
     await page.keyboard.press("y");
-    expect(
-      await page.evaluate(() => (window as unknown as { received: string[] }).received),
-    ).toEqual(["e:false"]);
+    expect(await actions(page)).toEqual(["click:Archive"]);
   });
 
-  it("leaves typing in inputs alone", async () => {
+  it("marks read with Outlook's Shift+I shortcut", async () => {
+    await page.keyboard.press(".");
+    await page.keyboard.press("r");
+    expect(await actions(page)).toEqual(["key:shift+I"]);
+  });
+
+  it("leaves typing in the search box alone", async () => {
     await page.locator("#topSearchInput").fill("");
     await page.locator("#topSearchInput").press("y");
     expect(await page.locator("#topSearchInput").inputValue()).toBe("y");
+    expect(await actions(page)).toEqual([]);
   });
 
-  it("keeps palette keystrokes away from the page and from the keymap", async () => {
+  it("goes to a folder through the palette", async () => {
+    await page.keyboard.press("g");
+    await page.keyboard.type("arch");
+    await page.keyboard.press("Enter");
+    expect(await actions(page)).toEqual(["click:archive"]);
+  });
+
+  it("keeps palette keystrokes away from the page and the keymap", async () => {
     await page.keyboard.press("g");
     await page.keyboard.type("yj");
     await page.keyboard.press("Escape");
-    expect(
-      await page.evaluate(() => (window as unknown as { received: string[] }).received),
-    ).toEqual([]);
+    expect(await actions(page)).toEqual([]);
   });
 
   it("swallows shortcuts while the help overlay is open", async () => {
     await page.keyboard.press("?");
     await page.keyboard.press("y");
     await page.keyboard.press("y");
-    expect(
-      await page.evaluate(() => (window as unknown as { received: string[] }).received),
-    ).toEqual(["e:false"]);
-  });
-
-  it("goes to a nested folder through the palette", async () => {
-    await page.keyboard.press("g");
-    await page.keyboard.type("rec");
-    await page.keyboard.press("Enter");
-    await expect.poll(() => page.title()).toBe("folder:Receipts");
-  });
-});
-
-// Scrubbed real pages (see test/fixtures/README.md). Each must pass the health check.
-const fixtures = (await readdir("test/fixtures")).filter((f) => f.endsWith(".html"));
-describe.skipIf(fixtures.length === 0)("scrubbed Outlook fixtures", () => {
-  it.each(fixtures)("%s has no broken selectors", async (name) => {
-    const fixture = await openPage(context, await readFile(`test/fixtures/${name}`, "utf8"));
-    await fixture.waitForTimeout(500);
-    const badge = await fixture.evaluate(
-      () =>
-        document.querySelector("overlook-root")?.shadowRoot?.querySelector(".health:not([hidden])")
-          ?.textContent ?? null,
-    );
-    expect(badge).toBeNull();
+    expect(await actions(page)).toEqual(["click:Archive"]);
   });
 });

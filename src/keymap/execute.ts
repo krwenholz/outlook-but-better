@@ -1,6 +1,6 @@
 // Turns an action into DOM effects. The only keymap file that touches the page.
 
-import { openPalette } from "../palette/palette.ts";
+import { openFolderPalette } from "../palette/palette.ts";
 import { resolve } from "../selectors.ts";
 import { showHelp, toast } from "../ui/overlay.ts";
 import { ACTIONS, type ActionId, type ExtensionCommand } from "./actions.ts";
@@ -17,7 +17,14 @@ export function currentContext(): Context {
 /** Dispatch Outlook's own shortcut. Our listener ignores these because isTrusted is false. */
 function dispatchKey(key: string): void {
   const target = document.activeElement ?? document.body;
-  const init: KeyboardEventInit = { key, bubbles: true, cancelable: true, composed: true };
+  const shiftKey = key.length === 1 && key !== key.toLowerCase();
+  const init: KeyboardEventInit = {
+    key,
+    shiftKey,
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  };
   target.dispatchEvent(new KeyboardEvent("keydown", init));
   target.dispatchEvent(new KeyboardEvent("keyup", init));
 }
@@ -33,10 +40,7 @@ function runExtension(command: ExtensionCommand): void {
       );
       return;
     case "palette-go":
-      openPalette("go");
-      return;
-    case "palette-move":
-      openPalette("move");
+      openFolderPalette();
       return;
   }
 }
@@ -53,6 +57,7 @@ export function execute(id: ActionId): boolean {
     case "drive": {
       const target = resolve(strategy.target);
       if (target instanceof HTMLElement) target.click();
+      else if (strategy.key) dispatchKey(strategy.key);
       else toast(`${description}: couldn't find the button`);
       return true;
     }

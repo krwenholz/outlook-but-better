@@ -1,10 +1,9 @@
-// Folder palette: Fastmail's `g` (go to folder) and `m` (move to folder) type-ahead picker.
+// Folder palette: Fastmail's `g` (go to folder) type-ahead picker. Moving (`m`) uses Outlook's
+// own "Move to" picker for now; see docs/decisions.md.
 
 import { type FolderNode, readFolderTree } from "../selectors.ts";
 import { el, overlayRoot, toast } from "../ui/overlay.ts";
 import { type FuzzyMatch, fuzzyFilter } from "./fuzzy.ts";
-
-export type PaletteMode = "go" | "move";
 
 const MAX_RESULTS = 12;
 
@@ -17,16 +16,7 @@ function highlight(text: string, indices: readonly number[]): DocumentFragment {
   return frag;
 }
 
-function choose(mode: PaletteMode, folder: FolderNode): void {
-  if (mode === "go") {
-    (folder.element as HTMLElement).click();
-    return;
-  }
-  // TODO(Phase 1 spike): decide between driving the folder pane and Outlook's "Move to" dialog.
-  toast(`Move to "${folder.path}" isn't implemented yet`);
-}
-
-export function openPalette(mode: PaletteMode): void {
+export function openFolderPalette(): void {
   const folders = readFolderTree();
   if (folders.length === 0) {
     toast("Overlook couldn't find the folder pane");
@@ -37,7 +27,7 @@ export function openPalette(mode: PaletteMode): void {
   const backdrop = el("div", "backdrop");
   const panel = el("div", "panel palette");
   const input = el("input", "");
-  input.placeholder = mode === "go" ? "Go to folder…" : "Move to folder…";
+  input.placeholder = "Go to folder…";
   input.setAttribute("aria-label", input.placeholder);
   const list = el("ul", "");
   list.setAttribute("role", "listbox");
@@ -52,7 +42,7 @@ export function openPalette(mode: PaletteMode): void {
   const commit = () => {
     const match = matches[selected];
     close();
-    if (match) choose(mode, match.item);
+    if (match) (match.item.element as HTMLElement).click();
   };
 
   const render = () => {

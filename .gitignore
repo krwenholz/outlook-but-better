@@ -3,3 +3,4 @@ dist/
 *.zip
 # Raw saved Outlook pages contain real mail. Never commit them; scrub into test/fixtures/ instead.
 fixtures-raw/
+.scratch/

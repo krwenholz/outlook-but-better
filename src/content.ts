@@ -4,8 +4,14 @@ import { ACTIONS } from "./keymap/actions.ts";
 import { BINDINGS } from "./keymap/bindings.ts";
 import { DEFAULT_TIMEOUT_MS, keyFromEvent, SequenceEngine } from "./keymap/engine.ts";
 import { currentContext, execute } from "./keymap/execute.ts";
-import { brokenEntries, healthCheck, resolve, tagElements } from "./selectors.ts";
-import { featureTokens, loadSettings, onSettingsChanged, type Settings } from "./settings.ts";
+import {
+  brokenEntries,
+  healthCheck,
+  outlookColorScheme,
+  resolve,
+  tagElements,
+} from "./selectors.ts";
+import { applyToDocument, loadSettings, onSettingsChanged, type Settings } from "./settings.ts";
 import { isFromOverlay, isModalOpen, showHealthBadge, showHint } from "./ui/overlay.ts";
 
 const LOG = "[overlook]";
@@ -16,8 +22,17 @@ let healthDismissed = false;
 
 function applySettings(next: Settings): void {
   settings = next;
-  document.documentElement.setAttribute("data-overlook-features", featureTokens(settings));
+  applyToDocument(settings, document.documentElement);
+  syncColorScheme();
   if (!settings.healthIndicator) showHealthBadge([], () => {});
+}
+
+/** Mirrors Outlook's own light/dark mode onto <html> so "Follow Outlook" palettes can match it. */
+function syncColorScheme(): void {
+  const scheme = outlookColorScheme(document.documentElement);
+  if (document.documentElement.getAttribute("data-overlook-outlook-scheme") !== scheme) {
+    document.documentElement.setAttribute("data-overlook-outlook-scheme", scheme);
+  }
 }
 
 function runHealthCheck(): void {
@@ -63,6 +78,7 @@ function watchPage(): void {
     requestAnimationFrame(() => {
       scheduled = false;
       tagElements();
+      syncColorScheme();
       if (location.href !== lastUrl) {
         lastUrl = location.href;
         runHealthCheck();

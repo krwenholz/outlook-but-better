@@ -1,38 +1,84 @@
 import { JSDOM } from "jsdom";
 import { describe, expect, it } from "vitest";
-import { scrubHtml } from "../scripts/scrub-fixture.ts";
+import { assertClean, fakeText, isUiText, scrubHtml } from "../scripts/scrub-fixture.ts";
 import { healthCheck } from "../src/selectors.ts";
 
-const raw = `<!doctype html><html><head><script>secret()</script><title>Inbox - Jane Doe</title></head><body>
-  <div id="MailList" role="listbox">
-    <div role="option" aria-label="From Jane Doe, Subject: Merger plans" data-convid="AAQkADAwATM0MDAAMS1">
-      <span>jane.doe@contoso.com</span><span>Merger plans for Q3</span>
-      <img src="https://contoso.com/avatar.png" alt="Jane Doe">
+const raw = `<!doctype html><html><head><script>secret()</script><title>Inbox - Jane Doe</title>
+  <link rel="stylesheet" href="./Mail%20-%20Jane_files/owa.mail.css">
+  <link rel="stylesheet" href="https://cdn.example/remote.css"></head><body>
+  <div id="MailList" role="listbox" aria-label="Message list">
+    <div role="option" id="AQAAAAAAAQ=" aria-labelledby="AQAAAAAAAQ=" data-convid="AAQkADAwATM0MDAAMS1"
+         aria-label="From Jane Doe, Subject: Merger plans at Contoso">
+      <span>jane.doe@contoso.com</span><span>Merger plans for Q3, ref 4815162342</span>
+      <img src="./Mail%20-%20Jane_files/avatar.jpg" alt="Jane Doe">
       <a href="https://contoso.com/secret">link</a>
+      <span originalsrc="https://contoso.zoom.us/j/123?pwd=hunter2">join</span>
     </div>
   </div>
+  <div role="treeitem" data-folder-name="contoso clients" title="Inbox - 9 items (1 unread)"></div>
   <button aria-label="Archive">Archive</button>
+  <span>Move this message to your archive folder. (E)</span>
   <button aria-label="Copilot summary of Merger plans"></button>
   <!-- Jane's comment -->
 </body></html>`;
 
 describe("scrubHtml", () => {
-  const { html } = scrubHtml(raw);
+  const { html, assets } = scrubHtml(raw, { assetDir: "Mail - Jane_files", denylist: ["contoso"] });
 
-  it("removes names, addresses, subjects, links and images", () => {
-    for (const secret of ["Jane", "Doe", "contoso", "Merger", "secret", "AAQk", "avatar"]) {
+  it("removes names, addresses, subjects, links, ids, tokens and images", () => {
+    for (const secret of [
+      "Jane",
+      "Doe",
+      "contoso",
+      "Merger",
+      "secret",
+      "AAQk",
+      "AQAAAAAAAQ",
+      "avatar",
+      "4815162342",
+      "hunter2",
+      "zoom",
+    ]) {
       expect(html).not.toContain(secret);
     }
   });
 
-  it("keeps structure and the labels the registry depends on", () => {
+  it("keeps Outlook UI text and the labels the registry depends on", () => {
     const { document } = new JSDOM(html).window;
     const found = new Map(healthCheck(document).map((r) => [r.name, r.candidate >= 0]));
     expect(found.get("messageList")).toBe(true);
     expect(found.get("archiveButton")).toBe(true);
-    expect(found.get("copilot")).toBe(true);
     expect(
       document.querySelector('button[aria-label*="Copilot"]')?.getAttribute("aria-label"),
     ).toBe("Copilot");
+    expect(html).toContain("Move this message to your archive folder. (E)");
+    expect(html).toContain('title="Inbox - 9 items (1 unread)"');
+  });
+
+  it("rewrites id references consistently", () => {
+    const { document } = new JSDOM(html).window;
+    const row = document.querySelector('[role="option"]');
+    expect(row?.getAttribute("aria-labelledby")).toBe(row?.id);
+  });
+
+  it("keeps only local stylesheets and safe assets", () => {
+    expect(assets).toEqual(["owa.mail.css"]);
+    expect(html).toContain('href="assets/owa.mail.css"');
+    expect(html).not.toContain("cdn.example");
+  });
+
+  it("refuses output that still contains a denylisted term", () => {
+    expect(() => assertClean("hello Contoso", ["contoso"])).toThrow();
+    expect(() => assertClean("flags@2x.png someone@example.com", [])).not.toThrow();
+  });
+});
+
+describe("fake text", () => {
+  it("is deterministic and keeps UI vocabulary", () => {
+    expect(fakeText("Quarterly numbers")).toBe(fakeText("Quarterly numbers"));
+    expect(fakeText("Quarterly numbers")).not.toBe("Quarterly numbers");
+    expect(isUiText("Sent Items - 4 items (0 unread)")).toBe(true);
+    expect(isUiText("Thu 12/17/2026 8:30 AM")).toBe(true);
+    expect(isUiText("Design & Make Conference")).toBe(false);
   });
 });

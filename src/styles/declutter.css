@@ -1,9 +1,17 @@
 /* Declutter: one rule per toggle in settings.ts. Target only data-overlook tokens set by
    selectors.ts, never Outlook's own markup. */
 
+[data-overlook-features~="hide-upsell"] [data-overlook~="upsell"],
 [data-overlook-features~="hide-copilot"] [data-overlook~="copilot"],
-[data-overlook-features~="hide-promo-banner"] [data-overlook~="promo-banner"],
+[data-overlook-features~="hide-header-extras"] [data-overlook~="header-extra"],
+[data-overlook-features~="hide-rail-extras"] [data-overlook~="rail-extra"],
+[data-overlook-features~="hide-ribbon-extras"] [data-overlook~="ribbon-extra"],
 [data-overlook-features~="hide-external-tag"] [data-overlook~="external-tag"],
+[data-overlook-features~="hide-row-actions"] [data-overlook~="row-action"],
+[data-overlook-features~="hide-avatars"] [data-overlook~="row-avatar"],
+[data-overlook-features~="hide-group-headers"] [data-overlook~="group-header"],
+[data-overlook-features~="hide-focused-tabs"] [data-overlook~="focused-tabs"],
+[data-overlook-features~="hide-ribbon-tabs"] [data-overlook~="ribbon-tabs"],
 [data-overlook-features~="hide-app-rail"] [data-overlook~="app-rail"],
 [data-overlook-features~="hide-ribbon"] [data-overlook~="ribbon"] {
   display: none !important;
