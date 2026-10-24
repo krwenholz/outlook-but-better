@@ -1,0 +1,176 @@
+<title>Overlook Looks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: a contact sheet. A filter bar of palettes, then a two-up grid of captioned frames. */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --fg: #1d2330;
+    --muted: #5c6577;
+    --rule: #dde1e8;
+    --accent: #2f6fdd;
+    --chip: #e8edf6;
+    --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12161f; --surface: #1a1f2b; --fg: #e3e7ee; --muted: #98a1b2;
+      --rule: #2a3142; --accent: #7aa2f7; --chip: #232b3b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161f; --surface: #1a1f2b; --fg: #e3e7ee; --muted: #98a1b2;
+    --rule: #2a3142; --accent: #7aa2f7; --chip: #232b3b; color-scheme: dark;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.55 var(--font-body);
+  }
+  .wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding-block: 32px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid;
+    gap: 28px;
+  }
+  header { display: grid; gap: 8px; max-width: 70ch; }
+  h1 { font-size: 28px; font-weight: 600; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filters button {
+    font: 500 13px/1 var(--font-body);
+    color: var(--fg);
+    background: var(--chip);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .filters button:focus-visible, figure button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 20px; }
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    display: grid;
+    min-width: 0;
+  }
+  figure button { all: unset; cursor: zoom-in; display: block; }
+  figure img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--rule); }
+  figcaption { padding: 12px 14px 14px; display: grid; gap: 6px; }
+  .name { font-weight: 600; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font: 500 12px/1 var(--font-mono); color: var(--muted); background: var(--chip); border-radius: 4px; padding: 4px 6px; }
+  .note { font-size: 13px; color: var(--muted); margin: 0; }
+  section.notes { display: grid; gap: 10px; max-width: 72ch; border-top: 1px solid var(--rule); padding-top: 20px; }
+  section.notes h2 { font-size: 17px; margin: 0; }
+  section.notes ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  code { font: 13px var(--font-mono); background: var(--chip); padding: 1px 4px; border-radius: 3px; }
+  dialog { border: 0; padding: 0; background: transparent; max-width: min(96vw, 1600px); }
+  dialog::backdrop { background: rgb(0 0 0 / 70%); }
+  dialog img { display: block; max-width: 100%; max-height: 90vh; border-radius: 8px; }
+  dialog form { position: absolute; top: 8px; right: 8px; }
+  dialog form button { font: 600 14px var(--font-body); background: var(--surface); color: var(--fg); border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Overlook Looks</h1>
+    <p>Palettes and layouts rendered on a scrubbed copy of your Outlook inbox. Text is placeholder words and icons are missing because of how the page was captured. Colours, spacing and pane arrangement are what the extension actually does.</p>
+  </header>
+
+  <div class="filters" role="group" aria-label="Filter by palette">
+    <button type="button" id="f-all" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" id="f-solarized" data-filter="solarized" aria-pressed="false">Solarized</button>
+    <button type="button" id="f-base16" data-filter="base16" aria-pressed="false">Base16 Default</button>
+    <button type="button" id="f-fastmail" data-filter="fastmail" aria-pressed="false">Fastmail</button>
+    <button type="button" id="f-paper" data-filter="paper" aria-pressed="false">Paper</button>
+    <button type="button" id="f-outlook" data-filter="outlook" aria-pressed="false">Stock</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="notes">
+    <h2>About the layouts</h2>
+    <ul>
+      <li><strong>Calm</strong> keeps Outlook's three panes and quiets the chrome: no ribbon tabs, softer app rail, flatter rows.</li>
+      <li><strong>Fastmail</strong> is list first: full-width rows, a sidebar of folders, a flat toolbar with an accent compose button. It assumes Outlook's <code>Reading pane: Hide</code> setting so a message opens full width.</li>
+      <li><strong>Focus</strong> drops the app rail, folder pane and ribbon, and centres the list. Switch folders with <code>g</code>. Same reading-pane setting.</li>
+      <li>Dark palettes show email bodies as a light card, since most emails hard-code a white background.</li>
+    </ul>
+  </section>
+</div>
+
+<dialog id="zoom">
+  <form method="dialog"><button type="submit" id="zoom-close">Close</button></form>
+  <img id="zoom-img" alt="">
+</dialog>
+
+<script>
+  const LOOKS = [
+    { file: "solarized-light-calm", name: "Solarized, light", palette: "solarized", mode: "light", layout: "calm" },
+    { file: "solarized-dark-calm", name: "Solarized, dark", palette: "solarized", mode: "dark", layout: "calm" },
+    { file: "fastmail-light-fastmail", name: "Fastmail, light", palette: "fastmail", mode: "light", layout: "fastmail" },
+    { file: "fastmail-dark-calm", name: "Fastmail, dark", palette: "fastmail", mode: "dark", layout: "calm" },
+    { file: "base16-dark-fastmail", name: "Base16 Default, dark", palette: "base16", mode: "dark", layout: "fastmail" },
+    { file: "base16-light-fastmail", name: "Base16 Default, light", palette: "base16", mode: "light", layout: "fastmail" },
+    { file: "paper-light-focus", name: "Paper", palette: "paper", mode: "light", layout: "focus", note: "Warm off-white with a rust accent and serif headings in the reader." },
+    { file: "solarized-dark-focus", name: "Solarized, dark, focus", palette: "solarized", mode: "dark", layout: "focus" },
+    { file: "outlook-stock", name: "Stock Outlook (capture baseline)", palette: "outlook", mode: "auto", layout: "outlook", note: "No palette or layout. Parts look broken only because the saved page lost Outlook's runtime styles." },
+  ];
+  const grid = document.getElementById("grid");
+  const zoom = document.getElementById("zoom");
+  const zoomImg = document.getElementById("zoom-img");
+
+  for (const look of LOOKS) {
+    const fig = document.createElement("figure");
+    fig.dataset.palette = look.palette;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("aria-label", `Enlarge ${look.name}`);
+    const img = document.createElement("img");
+    img.src = `screenshots/${look.file}.png`;
+    img.alt = `${look.name}, ${look.layout} layout`;
+    img.loading = "lazy";
+    btn.append(img);
+    btn.addEventListener("click", () => { zoomImg.src = img.src; zoomImg.alt = img.alt; zoom.showModal(); });
+    const cap = document.createElement("figcaption");
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = look.name;
+    const tags = document.createElement("div");
+    tags.className = "tags";
+    for (const t of [`palette: ${look.palette}`, `mode: ${look.mode}`, `layout: ${look.layout}`]) {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.textContent = t;
+      tags.append(span);
+    }
+    cap.append(name, tags);
+    if (look.note) {
+      const p = document.createElement("p");
+      p.className = "note";
+      p.textContent = look.note;
+      cap.append(p);
+    }
+    fig.append(btn, cap);
+    grid.append(fig);
+  }
+
+  for (const b of document.querySelectorAll(".filters button")) {
+    b.addEventListener("click", () => {
+      for (const o of document.querySelectorAll(".filters button")) o.setAttribute("aria-pressed", String(o === b));
+      for (const f of grid.children) f.hidden = b.dataset.filter !== "all" && f.dataset.palette !== b.dataset.filter;
+    });
+  }
+  zoom.addEventListener("click", (e) => { if (e.target === zoom) zoom.close(); });
+</script>
