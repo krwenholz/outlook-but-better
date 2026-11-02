@@ -1,6 +1,6 @@
 // Loads the built extension into Chromium and serves a fixture at an Outlook URL, so the content
-// script runs exactly as it would on the real site. No network: every other request is aborted.
-// Also used by scripts/screenshots.ts.
+// script runs exactly as it would on the real site. No network by default: every other request is
+// aborted. Also used by scripts/screenshots.ts, which lets Outlook's public CDN through for fonts.
 
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -8,6 +8,7 @@ import path from "node:path";
 import { type BrowserContext, chromium, type Page } from "playwright";
 
 export const OUTLOOK_URL = "https://outlook.cloud.microsoft/mail/";
+const OUTLOOK_CDN = "https://res.public.onecdn.static.microsoft/";
 const FIXTURES = path.resolve("test/fixtures");
 
 export async function launch(): Promise<BrowserContext> {
@@ -19,19 +20,39 @@ export async function launch(): Promise<BrowserContext> {
   });
 }
 
-/** Opens test/fixtures/<name>.html at the Outlook URL, with its assets/ alongside. */
-export async function openFixture(context: BrowserContext, name: string): Promise<Page> {
+export interface FixtureOptions {
+  /** Let requests to Outlook's public CDN (fonts, icon fonts) through. Screenshots only. */
+  cdn?: boolean;
+}
+
+/** Opens test/fixtures/<name>.html at the Outlook URL, with its assets/ and vendor/ alongside. */
+export async function openFixture(
+  context: BrowserContext,
+  name: string,
+  options: FixtureOptions = {},
+): Promise<Page> {
   const page = await context.newPage();
   await page.route("**/*", async (route) => {
     const url = route.request().url();
     if (url === OUTLOOK_URL) {
       const html = await readFile(path.join(FIXTURES, `${name}.html`), "utf8");
-      const shim = '<link rel="stylesheet" href="shim.css">';
+      // Captures made with the DevTools snippet carry their runtime styles in vendor/; only
+      // "Save page" captures need the heavier approximations.
+      const shims = html.includes('href="vendor/') ? ["shim.css"] : ["shim.css", "shim-saved.css"];
+      const links = shims.map((s) => `<link rel="stylesheet" href="${s}">`).join("");
       return route.fulfill({
         contentType: "text/html; charset=utf-8",
-        body: html.replace("</head>", `${shim}</head>`),
+        body: html.replace("</head>", `${links}</head>`),
       });
     }
+    if (url === `${OUTLOOK_URL}shim-saved.css`) {
+      return route.fulfill({ path: path.join(FIXTURES, "shim-saved.css") });
+    }
+    if (url.startsWith(`${OUTLOOK_URL}vendor/`)) {
+      const file = path.join(FIXTURES, "vendor", path.basename(new URL(url).pathname));
+      return existsSync(file) ? route.fulfill({ path: file }) : route.fulfill({ status: 404 });
+    }
+    if (options.cdn && url.startsWith(OUTLOOK_CDN)) return route.continue();
     if (url === `${OUTLOOK_URL}shim.css`)
       return route.fulfill({ path: path.join(FIXTURES, "shim.css") });
     if (url.startsWith(`${OUTLOOK_URL}assets/`)) {

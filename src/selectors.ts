@@ -206,7 +206,6 @@ export const SELECTORS = {
   moveButton: { candidates: ['button[aria-label="Move to"]'], expect: "sometimes" },
   snoozeButton: { candidates: ['button[aria-label="Snooze"]'], expect: "sometimes" },
   flagButton: { candidates: ['button[aria-label="Flag / Unflag"]'], expect: "sometimes" },
-  pinButton: { candidates: ['button[aria-label="Pin / Unpin"]'], expect: "sometimes" },
   readUnreadButton: { candidates: ['button[aria-label="Read / Unread"]'], expect: "sometimes" },
   undoButton: { candidates: ['button[aria-label="Undo"]'], expect: "sometimes" },
   syncButton: { candidates: ["#owaSyncButton_container"], expect: "sometimes" },

@@ -269,6 +269,75 @@ html:not([data-overlook-palette="outlook"])[data-overlook-palette] [class*="fui-
   --colorCompoundBrandStroke: var(--ol-accent) !important;
   --colorNeutralForegroundOnBrand: var(--ol-accent-fg) !important;
   --colorStrokeFocus2: var(--ol-accent) !important;
+
+  /* Fluent v9 interaction-state variants. */
+  --colorNeutralForeground1Hover: var(--ol-fg-strong) !important;
+  --colorNeutralForeground1Pressed: var(--ol-fg-strong) !important;
+  --colorNeutralForeground1Selected: var(--ol-fg-strong) !important;
+  --colorNeutralForeground2Hover: var(--ol-fg) !important;
+  --colorNeutralForeground2Pressed: var(--ol-fg) !important;
+  --colorNeutralForeground2Selected: var(--ol-fg) !important;
+  --colorNeutralForeground2LinkHover: var(--ol-fg) !important;
+  --colorNeutralForeground3Hover: var(--ol-muted) !important;
+  --colorNeutralForeground3Pressed: var(--ol-muted) !important;
+  --colorNeutralForeground3Selected: var(--ol-muted) !important;
+  --neutralForeground4: var(--ol-muted) !important;
+  --colorNeutralStrokeAccessible: var(--ol-muted) !important;
+  --colorNeutralForeground2BrandHover: var(--ol-accent) !important;
+  --colorNeutralForeground2BrandPressed: var(--ol-accent) !important;
+  --colorNeutralForeground2BrandSelected: var(--ol-accent) !important;
+  --colorNeutralForeground3BrandHover: var(--ol-accent) !important;
+  --colorNeutralForeground3BrandSelected: var(--ol-accent) !important;
+  --colorBrandStroke1: var(--ol-accent) !important;
+  --colorBrandStroke2: var(--ol-accent) !important;
+  --colorBrandForeground2Hover: var(--ol-accent) !important;
+  --colorBrandForegroundLink: var(--ol-accent) !important;
+  --colorBrandForegroundLinkHover: var(--ol-accent) !important;
+  --colorBrandBackgroundPressed: var(--ol-accent) !important;
+  --colorBrandBackgroundSelected: var(--ol-accent) !important;
+  --colorCompoundBrandBackgroundHover: var(--ol-accent) !important;
+  --colorCompoundBrandBackgroundPressed: var(--ol-accent) !important;
+  --colorCompoundBrandStrokePressed: var(--ol-accent) !important;
+  --colorCompoundBrandForeground1Hover: var(--ol-accent) !important;
+  --colorBrandBackground2Hover: color-mix(in srgb, var(--ol-accent) 22%, var(--ol-bg)) !important;
+  --colorBrandBackground2Pressed: color-mix(in srgb, var(--ol-accent) 22%, var(--ol-bg)) !important;
+  --colorNeutralForegroundDisabled: color-mix(
+    in srgb,
+    var(--ol-muted) 60%,
+    var(--ol-bg)
+  ) !important;
+  --colorNeutralStrokeDisabled: color-mix(in srgb, var(--ol-muted) 60%, var(--ol-bg)) !important;
+  --colorNeutralForegroundStaticInverted: var(--ol-accent-fg) !important;
+  --colorNeutralStrokeOnBrand: var(--ol-accent-fg) !important;
+  --colorNeutralStrokeOnBrand2: var(--ol-accent-fg) !important;
+  --colorNeutralBackground2Pressed: var(--ol-hover) !important;
+  --colorNeutralBackground3Hover: var(--ol-hover) !important;
+  --colorNeutralBackground4Hover: var(--ol-hover) !important;
+  --colorNeutralBackground5Hover: var(--ol-hover) !important;
+  --colorNeutralBackground6: var(--ol-hover) !important;
+  --colorTransparentBackgroundHover: var(--ol-hover) !important;
+  --colorSubtleBackgroundLightAlphaHover: var(--ol-hover) !important;
+  --colorSubtleBackgroundInvertedHover: var(--ol-hover) !important;
+  --colorNeutralBackground2Selected: var(--ol-selected) !important;
+  --colorNeutralBackground3Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground3Selected: var(--ol-selected) !important;
+  --colorNeutralBackground4Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground4Selected: var(--ol-selected) !important;
+  --colorNeutralBackground5: var(--ol-selected) !important;
+  --colorNeutralBackground5Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground5Selected: var(--ol-selected) !important;
+  --colorTransparentBackgroundPressed: var(--ol-selected) !important;
+  --colorTransparentBackgroundSelected: var(--ol-selected) !important;
+  --themeSecondarySurfaceSelected: var(--ol-selected) !important;
+  --colorNeutralBackgroundDisabled: var(--ol-bg-alt) !important;
+  --colorNeutralBackgroundAlpha: var(--ol-bg-alt) !important;
+  --colorNeutralBackgroundAlpha2: var(--ol-bg-alt) !important;
+  --colorNeutralStroke1Hover: var(--ol-faint) !important;
+  --colorNeutralStroke1Pressed: var(--ol-faint) !important;
+  --colorNeutralStroke1Selected: var(--ol-faint) !important;
+  --colorNeutralStrokeAlpha: var(--ol-faint) !important;
+  --colorNeutralStrokeAlpha2: var(--ol-faint) !important;
+  --colorNeutralStroke4: var(--ol-faint) !important;
 }
 
 html:not([data-overlook-palette="outlook"])[data-overlook-palette] body {

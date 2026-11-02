@@ -15,7 +15,7 @@
 
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { JSDOM } from "jsdom";
@@ -74,6 +74,8 @@ const KEEP_ATTRIBUTES = new Set(
 );
 const URL_ATTRIBUTES = new Set(["src", "srcset", "poster", "background", "action", "formaction"]);
 
+/** Outlook's public asset host (fonts, app icons); URLs there identify no one. */
+const PUBLIC_CDN = "https://res.public.onecdn.static.microsoft/";
 /** Where Outlook serves its stylesheets; scripts/fetch-fixture-assets.ts downloads from here. */
 export const OUTLOOK_CDN = "https://res.public.onecdn.static.microsoft/owamail/hashed-v1/scripts/";
 /** Saved assets the fixture may reference: Outlook's stylesheets, fetched from its CDN. */
@@ -156,9 +158,23 @@ export function isUiText(text: string): boolean {
   return true;
 }
 
+/** Digit runs split by phone-style separators ("+44 (0)121 766 9274", "555-0100"). */
+const PHONE = /\+?\(?\d[\d\s().-]{5,}\d/g;
+
+/** Every digit of a phone-like run replaced, so short groups don't survive one by one. */
+function maskPhones(text: string): string {
+  return text.replace(PHONE, (run) => {
+    if ((run.match(/\d/g) ?? []).length < 7) return run;
+    const h = hash(run);
+    let i = 0;
+    return run.replace(/\d/g, () => String((h[i++ % h.length] ?? 0) % 10));
+  });
+}
+
 export function fakeText(text: string): string {
-  if (isUiText(text)) return text;
-  return text.replace(EMAIL, "someone@example.com").replace(WORD, fakeWord);
+  const masked = maskPhones(text);
+  if (isUiText(masked)) return masked;
+  return masked.replace(EMAIL, "someone@example.com").replace(WORD, fakeWord);
 }
 
 /**
@@ -166,6 +182,8 @@ export function fakeText(text: string): string {
  * rather than names a developer chose ("ReadingPaneContainerId", "avatar-r3n").
  */
 export function isOpaque(value: string): boolean {
+  // Plain numbers (indexes, sizes, counts) are layout data, not identifiers.
+  if (/^-?\d{1,5}(\.\d+)?$/.test(value)) return false;
   if (!SAFE_TOKEN.test(value) || /\d{4,}/.test(value)) return true;
   return value
     .split(/[_\-\s]+/)
@@ -201,13 +219,25 @@ export interface ScrubOptions {
   assetDir?: string;
   /** Extra terms that must not survive (case-insensitive). */
   denylist?: readonly string[];
+  /** Fixture name; the runtime styles a DevTools capture carries go to vendor/<name>.runtime.css. */
+  name?: string;
 }
 
 export interface ScrubResult {
   html: string;
   /** Asset file names referenced by the output, to copy into assets/. */
   assets: string[];
+  /** Styles Fluent injected at runtime, when the capture kept them (docs/capturing-pages.md). */
+  runtimeCss?: string;
 }
+
+/**
+ * url(...) values other than inline data and Outlook's public CDN (fonts, icon fonts). Anything
+ * else (avatars, attachments, tracking pixels) could identify someone, so it becomes `none`.
+ */
+const PRIVATE_URL =
+  /url\((?!\s*["']?(?:data:|(?:https?:)?\/\/res\.public\.onecdn\.static\.microsoft\/))[^)]*\)/g;
+const stripUrls = (css: string) => css.replace(PRIVATE_URL, "none");
 
 export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult {
   const dom = new JSDOM(html);
@@ -248,8 +278,7 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (node.nodeType === node.COMMENT_NODE) comments.push(node);
     else if (node.parentElement?.tagName === "STYLE") {
-      // Keep the rules, but not external images they might point at (data: URIs are inline).
-      node.textContent = (node.textContent ?? "").replace(/url\((?!["']?data:)[^)]*\)/g, "none");
+      node.textContent = stripUrls(node.textContent ?? "");
     } else if (node.textContent?.trim()) {
       node.textContent = fakeText(node.textContent);
     }
@@ -264,9 +293,9 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
     if (element.tagName === "LINK") continue;
     for (const { name, value } of [...element.attributes]) {
       let next: string | null = value;
-      if (URL_ATTRIBUTES.has(name)) next = localAsset(value);
+      if (URL_ATTRIBUTES.has(name)) next = value.startsWith(PUBLIC_CDN) ? value : localAsset(value);
       else if (name === "href") next = value.startsWith("#") ? "#" : null;
-      else if (name === "style") next = value.replace(/url\([^)]*\)/g, "none");
+      else if (name === "style") next = stripUrls(value);
       else if (ID_REF_ATTRIBUTES.has(name)) next = value.split(/\s+/).map(fakeId).join(" ");
       else if (TEXT_ATTRIBUTES.has(name)) {
         const rule = labels.find(
@@ -293,13 +322,31 @@ export function scrubHtml(html: string, options: ScrubOptions = {}): ScrubResult
     }
   }
 
-  let out = dom.serialize().replace(EMAIL, "someone@example.com");
-  for (const term of options.denylist ?? []) {
+  // Runtime styles are Microsoft's; they live in vendor/ under its own notice, not in the page.
+  let runtimeCss: string | undefined;
+  const runtime = document.querySelector("style[data-overlook-runtime]");
+  if (runtime) {
+    runtimeCss = deny(runtime.textContent ?? "", options.denylist);
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `vendor/${options.name ?? "fixture"}.runtime.css`;
+    runtime.replaceWith(link);
+    assertClean(runtimeCss, options.denylist ?? []);
+  }
+
+  const out = deny(dom.serialize().replace(EMAIL, "someone@example.com"), options.denylist);
+  assertClean(out, options.denylist ?? []);
+  return { html: out, assets: [...assets].sort(), runtimeCss };
+}
+
+/** Replaces any denylisted term (case-insensitive) with a fake word. */
+function deny(text: string, denylist: readonly string[] = []): string {
+  let out = text;
+  for (const term of denylist) {
     const pattern = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
     out = out.replace(pattern, (match) => fakeWord(match));
   }
-  assertClean(out, options.denylist ?? []);
-  return { html: out, assets: [...assets].sort() };
+  return out;
 }
 
 /** Throws if any denylisted term or email address (other than the placeholder) remains. */
@@ -336,7 +383,11 @@ if (import.meta.main) {
   const raw = await readFile(input, "utf8");
   // Chrome saves assets next to the page as "<page name>_files/".
   const assetDir = raw.match(/(?:href|src)="\.\/([^"/]+_files)\//)?.[1];
-  const { html, assets } = scrubHtml(raw, { assetDir, denylist });
+  const { html, assets, runtimeCss } = scrubHtml(raw, { assetDir, denylist, name: values.name });
+  if (runtimeCss !== undefined) {
+    await mkdir(path.join(outDir, "vendor"), { recursive: true });
+    await writeFile(path.join(outDir, "vendor", `${values.name}.runtime.css`), runtimeCss);
+  }
 
   const manifest = path.join(outDir, "assets.json");
   const known: string[] = existsSync(manifest) ? JSON.parse(await readFile(manifest, "utf8")) : [];

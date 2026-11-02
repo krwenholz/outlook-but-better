@@ -1,78 +1,8 @@
-/* Fixture-only. Saved pages lose the styles Fluent injects at runtime (CSS-in-JS rules don't
-   serialize). This approximates the few that matter for screenshots. The extension never
-   loads it; the e2e harness adds it when serving a fixture. */
+/* Fixture-only, applied to every capture. Patches the few runtime rules even a DevTools-snippet
+   capture misses. The extension never loads it. */
 
-/* Icon glyphs come from a runtime-registered font whose codepoints we can't reproduce, so hide
-   them rather than show the wrong ones. */
-.fui-Icon-font,
-[data-icon-name] {
-  visibility: hidden;
-}
-
-.fui-Icon-filled,
-input[type="file"] {
-  display: none;
-}
-
-/* Fluent portals (tooltips, hover cards) that were open or mounted when the page was saved. */
-body > [data-portal-node],
-#fluent-default-layer-host {
-  display: none !important;
-}
-
-/* Ribbon button descriptions, which Office's ribbon hides visually and keeps for screen readers. */
-.acui-hidden-content {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-}
-
-/* Pane geometry: Outlook sizes these at runtime. Approximate its defaults. */
-#MainModule div:has([data-app-section="MailReadCompose"]),
-[data-app-section="MailReadCompose"] {
+/* The message list region fills its pane at runtime. */
+[data-app-section="MessageList"] > [role="complementary"] {
   flex: 1 1 auto !important;
-  min-width: 0 !important;
-}
-
-[data-app-section="NavigationPane"] {
-  width: 228px !important;
-  flex: 0 0 auto !important;
-}
-
-[data-app-section="MessageList"] {
-  width: 420px !important;
-  flex: 0 0 auto !important;
-}
-
-#ReadingPaneContainerId {
-  width: 100% !important;
-  overflow: hidden !important;
-}
-
-/* Ribbon rows. */
-[data-app-section="Ribbon"] :is(.ms-OverflowSet, [role="group"], [role="toolbar"], [role="tablist"]),
-#TopBar,
-#innerRibbonContainer {
-  display: flex !important;
-  align-items: center !important;
-  gap: 2px !important;
-}
-
-[data-app-section="Ribbon"] button {
-  white-space: nowrap !important;
-  padding: 4px 8px !important;
-}
-
-/* Images whose sources were dropped by the scrubber. */
-img:not([src]) {
-  visibility: hidden !important;
-}
-
-/* Fluent tabs render their label twice; the copy reserves bold width and is hidden at runtime. */
-.fui-Tab__content--reserved-space {
-  visibility: hidden !important;
-  height: 0 !important;
-  overflow: hidden !important;
+  min-height: 0 !important;
 }

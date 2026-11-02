@@ -29,8 +29,8 @@ its own colour variables, so everything matches, and "Follow Outlook" tracks its
 | ![Base16 dark, Fastmail layout](docs/screenshots/base16-dark-fastmail.png)         | ![Base16 light, Fastmail layout](docs/screenshots/base16-light-fastmail.png) |
 | ![Paper, focus](docs/screenshots/paper-light-focus.png)                            | ![Solarized dark, focus](docs/screenshots/solarized-dark-focus.png)          |
 
-Screenshots come from a scrubbed saved page (`mise run screenshots`), so text is placeholder
-words and icons are missing. The Fastmail and Focus layouts assume Outlook's "Reading pane:
+Screenshots come from scrubbed captures (`mise run screenshots`), so names and text are
+placeholder words. The Fastmail and Focus layouts assume Outlook's "Reading pane:
 Hide" setting.
 
 ## Develop

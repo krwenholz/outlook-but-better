@@ -42,6 +42,8 @@ dark mode…), open DevTools → Console, paste this, and press Enter. It downlo
 5. `mise run screenshots` to look at it, skim the HTML, then commit.
 
 The scrubber keeps structure, roles, semantic `data-*` values and Outlook's own UI words, and
-replaces everything else (names, subjects, bodies, addresses, ids, links) with deterministic
-fake words. Outlook's stylesheets are not committed; `mise run fixtures:assets` fetches them from
-Microsoft's CDN.
+replaces everything else (names, subjects, bodies, addresses, phone numbers, ids, links) with
+deterministic fake words. A snippet capture's runtime styles go to
+`test/fixtures/vendor/<state>.runtime.css` (see the NOTICE there). Outlook's static stylesheets
+are not committed; `mise run fixtures:assets` fetches them from Microsoft's CDN. Screenshots also
+load fonts and icons from that CDN, so they need network access; tests don't.

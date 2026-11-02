@@ -57,7 +57,6 @@ export const ACTIONS = {
   move: { description: "Move to folder…", strategy: drive("moveButton", "v") },
   goTo: { description: "Go to folder…", strategy: extension("palette-go") },
   snooze: { description: "Snooze", strategy: passthrough },
-  pin: { description: "Pin / unpin", strategy: drive("pinButton") },
   markRead: { description: "Mark read", strategy: translate("I") },
   markUnread: { description: "Mark unread", strategy: translate("U") },
   reply: { description: "Reply", strategy: passthrough },

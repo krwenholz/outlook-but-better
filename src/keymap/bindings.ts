@@ -33,7 +33,6 @@ export const BINDINGS: readonly Binding<ActionId>[] = [
   bind("m", "move"),
   bind("g", "goTo"),
   bind("b", "snooze"),
-  bind("s", "pin"),
   bind(". r", "markRead"),
   bind(". u", "markUnread"),
   bind("r", "reply", READING),

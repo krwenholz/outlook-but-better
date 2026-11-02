@@ -81,4 +81,10 @@ describe("fake text", () => {
     expect(isUiText("Thu 12/17/2026 8:30 AM")).toBe(true);
     expect(isUiText("Design & Make Conference")).toBe(false);
   });
+
+  it("masks every digit of phone numbers, not just the long groups", () => {
+    const faked = fakeText("Call +44 (0)121 766 9274 or 555-867-5309");
+    expect(faked).not.toMatch(/121|766|9274|867|5309/);
+    expect(fakeText("Thu 12/17/2026 8:30 AM")).toBe("Thu 12/17/2026 8:30 AM");
+  });
 });

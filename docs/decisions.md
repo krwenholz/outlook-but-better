@@ -2,15 +2,25 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-02: No pin binding
+
+Kyle doesn't use Fastmail's pin, so `s` is unbound rather than mapped to Outlook's Pin or Flag.
+
+## 2026-11-02: Runtime styles from captures live in `test/fixtures/vendor/`
+
+DevTools-snippet captures carry Outlook's runtime (CSS-in-JS) rules, which can't be fetched from
+anywhere, so they are committed, apart from the page, under `test/fixtures/vendor/` with a
+NOTICE: Microsoft's work, outside the MIT license, test use only, removed on request. A notice
+doesn't grant rights, but it is honest about what the files are and keeps them separable. The
+large static stylesheets are still fetched from Microsoft's CDN rather than committed. Commit
+`c5ad72d`, which once held those stylesheets, was purged from history on 2026-11-02.
+
 ## 2026-10-24: The repo may go public, so nothing Microsoft-owned or personal is committed
 
 - Outlook's stylesheets are listed in `test/fixtures/assets.json` and downloaded from Microsoft's
   CDN by `mise run fixtures:assets` into a gitignored folder. Icons are dropped.
 - Fixtures go through `scripts/scrub-fixture.ts`; a gitignored `fixtures-raw/denylist.txt` makes
   the scrub fail if any listed term (employer, names) survives.
-- Commit `c5ad72d` briefly carried the stylesheets in `test/fixtures/assets/`. Purge it from
-  history (e.g. `git filter-repo --path test/fixtures/assets --invert-paths`) before going
-  public.
 
 ## 2026-10-24: Fixture shim for screenshots
 
@@ -37,7 +47,7 @@ screenshot script simulates that setting.
 ## 2026-10-24: Drive Outlook's buttons first, keys second
 
 React honours `element.click()`, while synthetic key events are still unverified. Actions with a
-ribbon button (archive, delete, move, pin, undo, refresh) click it and fall back to Outlook's
+ribbon button (archive, delete, move, undo, refresh) click it and fall back to Outlook's
 Gmail-mode key when the button is absent. Read/unread uses Shift+I/Shift+U, since the ribbon
 only has a toggle.
 

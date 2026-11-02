@@ -85,7 +85,7 @@
 <div class="wrap">
   <header>
     <h1>Overlook Looks</h1>
-    <p>Palettes and layouts rendered on a scrubbed copy of your Outlook inbox. Text is placeholder words and icons are missing because of how the page was captured. Colours, spacing and pane arrangement are what the extension actually does.</p>
+    <p>Palettes and layouts rendered on scrubbed copies of your Outlook, captured with the DevTools snippet so Outlook's own styles, fonts and icons are intact. Names and text are placeholder words. The Calm shots have Outlook's "Move to" menu open, which shows that menus and popups pick up the palette too.</p>
   </header>
 
   <div class="filters" role="group" aria-label="Filter by palette">
@@ -125,7 +125,7 @@
     { file: "base16-light-fastmail", name: "Base16 Default, light", palette: "base16", mode: "light", layout: "fastmail" },
     { file: "paper-light-focus", name: "Paper", palette: "paper", mode: "light", layout: "focus", note: "Warm off-white with a rust accent and serif headings in the reader." },
     { file: "solarized-dark-focus", name: "Solarized, dark, focus", palette: "solarized", mode: "dark", layout: "focus" },
-    { file: "outlook-stock", name: "Stock Outlook (capture baseline)", palette: "outlook", mode: "auto", layout: "outlook", note: "No palette or layout. Parts look broken only because the saved page lost Outlook's runtime styles." },
+    { file: "outlook-stock", name: "Stock Outlook", palette: "outlook", mode: "auto", layout: "outlook", note: "No palette or layout, for comparison. The black header is your tenant's theme colour." },
   ];
   const grid = document.getElementById("grid");
   const zoom = document.getElementById("zoom");

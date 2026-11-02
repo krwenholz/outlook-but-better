@@ -202,6 +202,20 @@ html[data-overlook-layout="fastmail"] [data-overlook~="list-pane"] {
   width: auto !important;
 }
 
+/* The list fills whatever width its pane gets (Outlook pins the inner region to a fixed width). */
+html:is([data-overlook-layout="fastmail"], [data-overlook-layout="focus"])
+  [data-overlook~="list-pane"]
+  [role="complementary"] {
+  flex: 1 1 auto !important;
+}
+
+html:is([data-overlook-layout="fastmail"], [data-overlook-layout="focus"])
+  [data-overlook~="list-pane"]
+  :is([role="complementary"], [role="complementary"] > div, [data-overlook~="message-list"]) {
+  width: auto !important;
+  max-width: none !important;
+}
+
 html[data-overlook-layout="fastmail"] [data-overlook~="message-row"] {
   padding-block: 4px !important;
   border-left: 0 !important;
