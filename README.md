@@ -85,21 +85,22 @@ Accessibility) first; OBB builds on them.
 ## Install
 
 OBB isn't in the Chrome Web Store, so Chrome loads it from a folder. The `dist` branch always
-holds the latest build, so installing and updating are one `git` command each.
+holds the latest build, so installing and updating are one `git` command each. Any folder works;
+`~/Applications/OBB` keeps it with your other installed apps and is easy to pick in Chrome.
 
 **Install once:**
 
 ```sh
-git clone --branch dist --single-branch https://github.com/krwenholz/outlook-but-better.git ~/OBB
+git clone --branch dist --single-branch https://github.com/krwenholz/outlook-but-better.git ~/Applications/OBB
 ```
 
 Then open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick
-`~/OBB`. Pin OBB from Chrome's puzzle-piece menu for one-click settings.
+`~/Applications/OBB`. Pin OBB from Chrome's puzzle-piece menu for one-click settings.
 
 **Update:**
 
 ```sh
-git -C ~/OBB pull
+git -C ~/Applications/OBB pull
 ```
 
 Then click **Reload OBB** at the bottom of the OBB popup and refresh Outlook. Your settings carry
@@ -110,7 +111,7 @@ Prefer a download? Each version is also a zip on the
 
 ## Develop
 
-To work on OBB itself: `mise install && mise run install`, then load `dist/` instead of `~/OBB`.
+To work on OBB itself: `mise install && mise run install`, then load `dist/` instead of the installed copy.
 `mise run dev` rebuilds on change (reload the extension afterwards), and `mise run check` runs
 lint, types, unit tests and end-to-end tests in real Chromium against scrubbed Outlook pages.
 `mise run screenshots` and `mise run preview` regenerate the images above. See
