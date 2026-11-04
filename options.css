@@ -1,0 +1,763 @@
+/* Palettes. Each defines OBB's own --ol-* tokens, then maps them onto the variables Outlook
+   already colours itself with: the Fabric palette it writes on <html> (--white, --neutral*,
+   --theme*) and Fluent v9 tokens (--colorNeutral*, --colorBrand*). Overriding those recolours
+   Outlook coherently, including surfaces OBB never tags.
+
+   Fluent re-declares its tokens on every provider element, so the mapping targets those too
+   through Fluent's static "fui-FluentProvider" class name (part of its public API, not a
+   generated class).
+
+   Mode: "auto" follows Outlook's own light/dark mode (data-overlook-outlook-scheme).
+
+   Token blocks also match [data-overlook-swatch], so the options page can paint a preview card
+   in any palette without switching the whole page. */
+
+/* --- Solarized (Ethan Schoonover) --- */
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="solarized"][data-overlook-mode="light"],
+  [data-overlook-palette="solarized"][data-overlook-mode="auto"]:not(
+    [data-overlook-outlook-scheme="dark"]
+  )
+) {
+  --ol-bg: #fdf6e3;
+  --ol-bg-alt: #eee8d5;
+  --ol-bg-chrome: #eee8d5;
+  --ol-fg-chrome: #586e75;
+  --ol-fg: #657b83;
+  --ol-fg-strong: #073642;
+  --ol-muted: #93a1a1;
+  --ol-faint: #e4dcc4;
+  --ol-hover: #f5eedb;
+  --ol-selected: #e9e1c9;
+  --ol-accent: #268bd2;
+  --ol-accent-fg: #fdf6e3;
+  --ol-accent-2: #cb4b16;
+  --ol-letter-bg: var(--ol-bg);
+  --ol-letter-fg: var(--ol-fg-strong);
+  --ol-scheme: light;
+}
+
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="solarized"][data-overlook-mode="dark"],
+  [data-overlook-palette="solarized"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
+) {
+  --ol-bg: #002b36;
+  --ol-bg-alt: #073642;
+  --ol-bg-chrome: #073642;
+  --ol-fg-chrome: #93a1a1;
+  --ol-fg: #839496;
+  --ol-fg-strong: #eee8d5;
+  --ol-muted: #586e75;
+  --ol-faint: #0b3d4a;
+  --ol-hover: #04313d;
+  --ol-selected: #0b4252;
+  --ol-accent: #268bd2;
+  --ol-accent-fg: #fdf6e3;
+  --ol-accent-2: #b58900;
+  --ol-letter-bg: #fbfaf7;
+  --ol-letter-fg: #1f1f1f;
+  --ol-scheme: dark;
+}
+
+/* --- Base16 Default (Chris Kempson) --- */
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="base16"][data-overlook-mode="light"],
+  [data-overlook-palette="base16"][data-overlook-mode="auto"]:not(
+    [data-overlook-outlook-scheme="dark"]
+  )
+) {
+  --ol-bg: #f8f8f8;
+  --ol-bg-alt: #e8e8e8;
+  --ol-bg-chrome: #d8d8d8;
+  --ol-fg-chrome: #383838;
+  --ol-fg: #383838;
+  --ol-fg-strong: #181818;
+  --ol-muted: #585858;
+  --ol-faint: #d8d8d8;
+  --ol-hover: #efefef;
+  --ol-selected: #e0e0e0;
+  --ol-accent: #3d7d96; /* base0D, deepened for contrast on light */
+  --ol-accent-fg: #f8f8f8;
+  --ol-accent-2: #ab4642;
+  --ol-letter-bg: var(--ol-bg);
+  --ol-letter-fg: var(--ol-fg-strong);
+  --ol-scheme: light;
+}
+
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="base16"][data-overlook-mode="dark"],
+  [data-overlook-palette="base16"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
+) {
+  --ol-bg: #181818;
+  --ol-bg-alt: #282828;
+  --ol-bg-chrome: #282828;
+  --ol-fg-chrome: #b8b8b8;
+  --ol-fg: #b8b8b8;
+  --ol-fg-strong: #e8e8e8;
+  --ol-muted: #585858;
+  --ol-faint: #383838;
+  --ol-hover: #202020;
+  --ol-selected: #383838;
+  --ol-accent: #7cafc2;
+  --ol-accent-fg: #181818;
+  --ol-accent-2: #f7ca88;
+  --ol-letter-bg: #fbfaf7;
+  --ol-letter-fg: #1f1f1f;
+  --ol-scheme: dark;
+}
+
+/* --- Fastmail-inspired: navy chrome, white page, clear blue --- */
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="fastmail"][data-overlook-mode="light"],
+  [data-overlook-palette="fastmail"][data-overlook-mode="auto"]:not(
+    [data-overlook-outlook-scheme="dark"]
+  )
+) {
+  --ol-bg: #ffffff;
+  --ol-bg-alt: #f3f4f6;
+  --ol-bg-chrome: #22324f;
+  --ol-fg-chrome: #e8ecf3;
+  --ol-fg: #3b4252;
+  --ol-fg-strong: #111827;
+  --ol-muted: #6b7280;
+  --ol-faint: #e5e7eb;
+  --ol-hover: #f7f8fa;
+  --ol-selected: #e4e9f2;
+  --ol-accent: #2f6fdd;
+  --ol-accent-fg: #ffffff;
+  --ol-accent-2: #4f7cf0;
+  --ol-letter-bg: var(--ol-bg);
+  --ol-letter-fg: var(--ol-fg-strong);
+  --ol-scheme: light;
+}
+
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="fastmail"][data-overlook-mode="dark"],
+  [data-overlook-palette="fastmail"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
+) {
+  --ol-bg: #161b26;
+  --ol-bg-alt: #1d2433;
+  --ol-bg-chrome: #111827;
+  --ol-fg-chrome: #d6dbe4;
+  --ol-fg: #c3c9d4;
+  --ol-fg-strong: #f3f4f6;
+  --ol-muted: #7d8696;
+  --ol-faint: #283044;
+  --ol-hover: #1b2130;
+  --ol-selected: #26314a;
+  --ol-accent: #5b8def;
+  --ol-accent-fg: #0b1220;
+  --ol-accent-2: #7aa2f7;
+  --ol-letter-bg: #fbfaf7;
+  --ol-letter-fg: #1f1f1f;
+  --ol-scheme: dark;
+}
+
+/* --- Paper: warm off-white, ink, a rust accent, serif subjects --- */
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="paper"][data-overlook-mode="light"],
+  [data-overlook-palette="paper"][data-overlook-mode="auto"]:not(
+    [data-overlook-outlook-scheme="dark"]
+  )
+) {
+  --ol-bg: #f8f5ee;
+  --ol-bg-alt: #f1ece1;
+  --ol-bg-chrome: #f1ece1;
+  --ol-fg-chrome: #4a4740;
+  --ol-fg: #4a4740;
+  --ol-fg-strong: #1f1e1b;
+  --ol-muted: #8d877a;
+  --ol-faint: #e4ddcc;
+  --ol-hover: #f3efe5;
+  --ol-selected: #ebe4d4;
+  --ol-accent: #a8432a;
+  --ol-accent-fg: #fbf8f2;
+  --ol-accent-2: #3d6b5a;
+  --ol-letter-bg: var(--ol-bg);
+  --ol-letter-fg: var(--ol-fg-strong);
+  --ol-scheme: light;
+  --ol-font-reading: "Iowan Old Style", Charter, "Charis SIL", Georgia, serif;
+}
+
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="paper"][data-overlook-mode="dark"],
+  [data-overlook-palette="paper"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
+) {
+  --ol-bg: #1d1c1a;
+  --ol-bg-alt: #24221f;
+  --ol-bg-chrome: #24221f;
+  --ol-fg-chrome: #cfc8b8;
+  --ol-fg: #c9c2b2;
+  --ol-fg-strong: #ede6d6;
+  --ol-muted: #7f786b;
+  --ol-faint: #33302b;
+  --ol-hover: #222120;
+  --ol-selected: #312e29;
+  --ol-accent: #d9825f;
+  --ol-accent-fg: #1d1c1a;
+  --ol-accent-2: #8fb8a5;
+  --ol-letter-bg: #fbfaf7;
+  --ol-letter-fg: #1f1f1f;
+  --ol-scheme: dark;
+  --ol-font-reading: "Iowan Old Style", Charter, "Charis SIL", Georgia, serif;
+}
+
+/* --- Map the active palette onto Outlook's own variables --- */
+html:not([data-overlook-palette="outlook"]):is([data-overlook-palette]),
+html:not([data-overlook-palette="outlook"])[data-overlook-palette] [class*="fui-FluentProvider"] {
+  color-scheme: var(--ol-scheme);
+  --native-scrollbar-color-scheme: var(--ol-scheme) !important;
+
+  /* Fabric palette (inline on <html>). */
+  --white: var(--ol-bg) !important;
+  --black: var(--ol-fg-strong) !important;
+  --neutralDark: var(--ol-fg-strong) !important;
+  --neutralPrimary: var(--ol-fg) !important;
+  --neutralPrimaryAlt: var(--ol-fg) !important;
+  --neutralPrimarySurface: var(--ol-bg) !important;
+  --neutralSecondary: var(--ol-muted) !important;
+  --neutralSecondaryAlt: var(--ol-muted) !important;
+  --neutralSecondarySurface: var(--ol-bg-alt) !important;
+  --neutralTertiary: var(--ol-muted) !important;
+  --neutralTertiaryAlt: var(--ol-faint) !important;
+  --neutralTertiarySurface: var(--ol-hover) !important;
+  --neutralQuaternary: var(--ol-faint) !important;
+  --neutralQuaternaryAlt: var(--ol-faint) !important;
+  --neutralLight: var(--ol-selected) !important;
+  --neutralLighter: var(--ol-hover) !important;
+  --neutralLighterAlt: var(--ol-bg-alt) !important;
+  --themePrimary: var(--ol-accent) !important;
+  --themeDarkAlt: var(--ol-accent) !important;
+  --themeDark: var(--ol-accent) !important;
+  --themeDarker: var(--ol-accent) !important;
+  --themeSecondary: var(--ol-accent) !important;
+  --themeTertiary: color-mix(in srgb, var(--ol-accent) 60%, var(--ol-bg)) !important;
+  --themeLight: color-mix(in srgb, var(--ol-accent) 30%, var(--ol-bg)) !important;
+  --themeLighter: color-mix(in srgb, var(--ol-accent) 16%, var(--ol-bg)) !important;
+  --themeLighterAlt: color-mix(in srgb, var(--ol-accent) 8%, var(--ol-bg)) !important;
+  --richUserContentBackground: var(--ol-bg) !important;
+  --composeNeutralBackground: var(--ol-bg) !important;
+  --composeNeutralLighterBackground: var(--ol-bg-alt) !important;
+  --readingPaneCardBorder: var(--ol-faint) !important;
+  --readingPaneCardFocusBorder: var(--ol-faint) !important;
+  --flaggedMessage: color-mix(in srgb, var(--ol-accent-2) 12%, var(--ol-bg)) !important;
+  --app-module-background-color: var(--ol-bg) !important;
+
+  /* Fluent v9 tokens (on provider elements). */
+  --colorNeutralBackground1: var(--ol-bg) !important;
+  --colorNeutralBackground1Hover: var(--ol-hover) !important;
+  --colorNeutralBackground1Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground1Selected: var(--ol-selected) !important;
+  --colorNeutralBackground2: var(--ol-bg-alt) !important;
+  --colorNeutralBackground2Hover: var(--ol-hover) !important;
+  --colorNeutralBackground3: var(--ol-bg-alt) !important;
+  --colorNeutralBackground4: var(--ol-bg-alt) !important;
+  --colorSubtleBackgroundHover: var(--ol-hover) !important;
+  --colorSubtleBackgroundPressed: var(--ol-selected) !important;
+  --colorSubtleBackgroundSelected: var(--ol-selected) !important;
+  --colorNeutralForeground1: var(--ol-fg-strong) !important;
+  --colorNeutralForeground2: var(--ol-fg) !important;
+  --colorNeutralForeground3: var(--ol-muted) !important;
+  --colorNeutralForeground4: var(--ol-muted) !important;
+  --colorNeutralStroke1: var(--ol-faint) !important;
+  --colorNeutralStroke2: var(--ol-faint) !important;
+  --colorNeutralStroke3: var(--ol-faint) !important;
+  --colorBrandBackground: var(--ol-accent) !important;
+  --colorBrandBackgroundHover: var(--ol-accent) !important;
+  --colorBrandBackground2: color-mix(in srgb, var(--ol-accent) 14%, var(--ol-bg)) !important;
+  --colorBrandForeground1: var(--ol-accent) !important;
+  --colorBrandForeground2: var(--ol-accent) !important;
+  --colorCompoundBrandBackground: var(--ol-accent) !important;
+  --colorCompoundBrandForeground1: var(--ol-accent) !important;
+  --colorCompoundBrandStroke: var(--ol-accent) !important;
+  --colorNeutralForegroundOnBrand: var(--ol-accent-fg) !important;
+  --colorStrokeFocus2: var(--ol-accent) !important;
+
+  /* Fluent v9 interaction-state variants. */
+  --colorNeutralForeground1Hover: var(--ol-fg-strong) !important;
+  --colorNeutralForeground1Pressed: var(--ol-fg-strong) !important;
+  --colorNeutralForeground1Selected: var(--ol-fg-strong) !important;
+  --colorNeutralForeground2Hover: var(--ol-fg) !important;
+  --colorNeutralForeground2Pressed: var(--ol-fg) !important;
+  --colorNeutralForeground2Selected: var(--ol-fg) !important;
+  --colorNeutralForeground2LinkHover: var(--ol-fg) !important;
+  --colorNeutralForeground3Hover: var(--ol-muted) !important;
+  --colorNeutralForeground3Pressed: var(--ol-muted) !important;
+  --colorNeutralForeground3Selected: var(--ol-muted) !important;
+  --neutralForeground4: var(--ol-muted) !important;
+  --colorNeutralStrokeAccessible: var(--ol-muted) !important;
+  --colorNeutralForeground2BrandHover: var(--ol-accent) !important;
+  --colorNeutralForeground2BrandPressed: var(--ol-accent) !important;
+  --colorNeutralForeground2BrandSelected: var(--ol-accent) !important;
+  --colorNeutralForeground3BrandHover: var(--ol-accent) !important;
+  --colorNeutralForeground3BrandSelected: var(--ol-accent) !important;
+  --colorBrandStroke1: var(--ol-accent) !important;
+  --colorBrandStroke2: var(--ol-accent) !important;
+  --colorBrandForeground2Hover: var(--ol-accent) !important;
+  --colorBrandForegroundLink: var(--ol-accent) !important;
+  --colorBrandForegroundLinkHover: var(--ol-accent) !important;
+  --colorBrandBackgroundPressed: var(--ol-accent) !important;
+  --colorBrandBackgroundSelected: var(--ol-accent) !important;
+  --colorCompoundBrandBackgroundHover: var(--ol-accent) !important;
+  --colorCompoundBrandBackgroundPressed: var(--ol-accent) !important;
+  --colorCompoundBrandStrokePressed: var(--ol-accent) !important;
+  --colorCompoundBrandForeground1Hover: var(--ol-accent) !important;
+  --colorBrandBackground2Hover: color-mix(in srgb, var(--ol-accent) 22%, var(--ol-bg)) !important;
+  --colorBrandBackground2Pressed: color-mix(in srgb, var(--ol-accent) 22%, var(--ol-bg)) !important;
+  --colorNeutralForegroundDisabled: color-mix(
+    in srgb,
+    var(--ol-muted) 60%,
+    var(--ol-bg)
+  ) !important;
+  --colorNeutralStrokeDisabled: color-mix(in srgb, var(--ol-muted) 60%, var(--ol-bg)) !important;
+  --colorNeutralForegroundStaticInverted: var(--ol-accent-fg) !important;
+  --colorNeutralStrokeOnBrand: var(--ol-accent-fg) !important;
+  --colorNeutralStrokeOnBrand2: var(--ol-accent-fg) !important;
+  --colorNeutralBackground2Pressed: var(--ol-hover) !important;
+  --colorNeutralBackground3Hover: var(--ol-hover) !important;
+  --colorNeutralBackground4Hover: var(--ol-hover) !important;
+  --colorNeutralBackground5Hover: var(--ol-hover) !important;
+  --colorNeutralBackground6: var(--ol-hover) !important;
+  --colorTransparentBackgroundHover: var(--ol-hover) !important;
+  --colorSubtleBackgroundLightAlphaHover: var(--ol-hover) !important;
+  --colorSubtleBackgroundInvertedHover: var(--ol-hover) !important;
+  --colorNeutralBackground2Selected: var(--ol-selected) !important;
+  --colorNeutralBackground3Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground3Selected: var(--ol-selected) !important;
+  --colorNeutralBackground4Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground4Selected: var(--ol-selected) !important;
+  --colorNeutralBackground5: var(--ol-selected) !important;
+  --colorNeutralBackground5Pressed: var(--ol-selected) !important;
+  --colorNeutralBackground5Selected: var(--ol-selected) !important;
+  --colorTransparentBackgroundPressed: var(--ol-selected) !important;
+  --colorTransparentBackgroundSelected: var(--ol-selected) !important;
+  --themeSecondarySurfaceSelected: var(--ol-selected) !important;
+  --colorNeutralBackgroundDisabled: var(--ol-bg-alt) !important;
+  --colorNeutralBackgroundAlpha: var(--ol-bg-alt) !important;
+  --colorNeutralBackgroundAlpha2: var(--ol-bg-alt) !important;
+  --colorNeutralStroke1Hover: var(--ol-faint) !important;
+  --colorNeutralStroke1Pressed: var(--ol-faint) !important;
+  --colorNeutralStroke1Selected: var(--ol-faint) !important;
+  --colorNeutralStrokeAlpha: var(--ol-faint) !important;
+  --colorNeutralStrokeAlpha2: var(--ol-faint) !important;
+  --colorNeutralStroke4: var(--ol-faint) !important;
+}
+
+html:not([data-overlook-palette="outlook"])[data-overlook-palette] body {
+  background: var(--ol-bg) !important;
+  color: var(--ol-fg) !important;
+}
+
+/* The options page, also shown as the toolbar popup. It wears the palette the user picked:
+   palettes.css (bundled ahead of this file) defines --ol-* for every palette but Outlook's own,
+   whose stand-in tokens live here. Swatch cards set data-overlook-swatch to paint themselves in
+   their own palette. */
+
+:root,
+[data-overlook-swatch][data-overlook-palette="outlook"] {
+  --ol-bg: #ffffff;
+  --ol-bg-alt: #f5f5f5;
+  --ol-bg-chrome: #0f6cbd;
+  --ol-fg-chrome: #ffffff;
+  --ol-fg: #424242;
+  --ol-fg-strong: #242424;
+  --ol-muted: #707070;
+  --ol-faint: #e0e0e0;
+  --ol-hover: #f5f5f5;
+  --ol-selected: #ebf3fc;
+  --ol-accent: #0f6cbd;
+  --ol-accent-fg: #ffffff;
+  --ol-scheme: light;
+}
+
+:is(html, [data-overlook-swatch]):is(
+  [data-overlook-palette="outlook"][data-overlook-mode="dark"],
+  [data-overlook-palette="outlook"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
+) {
+  --ol-bg: #292929;
+  --ol-bg-alt: #1f1f1f;
+  --ol-bg-chrome: #0f548c;
+  --ol-fg-chrome: #ffffff;
+  --ol-fg: #d6d6d6;
+  --ol-fg-strong: #ffffff;
+  --ol-muted: #adadad;
+  --ol-faint: #3d3d3d;
+  --ol-hover: #333333;
+  --ol-selected: #0e3a5e;
+  --ol-accent: #479ef5;
+  --ol-accent-fg: #0b0b0b;
+  --ol-scheme: dark;
+}
+
+:root {
+  --radius: 10px;
+  --radius-sm: 7px;
+  --font:
+    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  color-scheme: var(--ol-scheme);
+}
+
+/* The page's own accent, fixed here so swatch cards (which redefine --ol-*) can still use it. */
+html {
+  --page-accent: var(--ol-accent);
+  --page-fg-strong: var(--ol-fg-strong);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 400px;
+  padding: 14px 16px 18px;
+  background: var(--ol-bg) !important;
+  color: var(--ol-fg) !important;
+  font: 14px / 1.45 var(--font);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ol-faint);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  color: var(--ol-fg-strong);
+  letter-spacing: -0.01em;
+}
+
+#version {
+  margin-left: auto;
+  color: var(--ol-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+main {
+  display: grid;
+  gap: 18px;
+  padding-top: 14px;
+}
+
+section {
+  display: grid;
+  gap: 8px;
+}
+
+h2,
+summary {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ol-muted);
+}
+
+.hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ol-muted);
+}
+
+/* --- Colour swatches --- */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.swatch {
+  all: unset;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  font-size: 12px;
+  color: var(--ol-fg);
+}
+
+.swatch .preview {
+  width: 100%;
+  aspect-ratio: 1 / 0.82;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: grid;
+  grid-template: 7px 1fr / 26% 1fr;
+  background: var(--ol-bg);
+  border: 1px solid var(--ol-faint);
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow 120ms ease;
+}
+
+.swatch .bar {
+  grid-column: 1 / -1;
+  background: var(--ol-bg-chrome);
+}
+
+.swatch .side {
+  background: var(--ol-bg-alt);
+}
+
+.swatch .body {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 6px 5px;
+}
+
+.swatch .line {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ol-fg-strong);
+  opacity: 0.75;
+}
+
+.swatch .line.short {
+  width: 60%;
+  background: var(--ol-accent);
+  opacity: 1;
+}
+
+.swatch .line.faint {
+  background: var(--ol-muted);
+  opacity: 0.6;
+}
+
+/* The selected ring uses the page's accent, not the swatch's. */
+.swatches .swatch[aria-checked="true"] .preview {
+  box-shadow: 0 0 0 2px var(--page-accent);
+  border-color: transparent;
+}
+
+.swatches .swatch[aria-checked="true"] {
+  color: var(--page-fg-strong);
+  font-weight: 600;
+}
+
+/* --- Segmented control --- */
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 3px;
+  gap: 3px;
+  border-radius: var(--radius);
+  background: var(--ol-bg-alt);
+  border: 1px solid var(--ol-faint);
+}
+
+.segmented button {
+  all: unset;
+  cursor: pointer;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--ol-fg);
+}
+
+.segmented button:hover {
+  background: var(--ol-hover);
+}
+
+.segmented button[aria-checked="true"] {
+  background: var(--ol-bg);
+  color: var(--ol-fg-strong);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 14%);
+}
+
+/* --- Layout cards --- */
+.layouts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.layout {
+  all: unset;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  font-size: 12px;
+  color: var(--ol-fg);
+}
+
+.layout svg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ol-faint);
+  background: var(--ol-bg);
+}
+
+.layout svg .chrome {
+  fill: var(--ol-faint);
+}
+
+.layout svg .pane {
+  fill: var(--ol-bg-alt);
+}
+
+.layout svg .row {
+  fill: var(--ol-muted);
+  opacity: 0.45;
+}
+
+.layout svg .hi {
+  fill: var(--ol-accent);
+}
+
+.layout[aria-checked="true"] svg {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--ol-accent);
+}
+
+.layout[aria-checked="true"] {
+  color: var(--ol-fg-strong);
+  font-weight: 600;
+}
+
+/* --- Switches --- */
+.toggles {
+  display: grid;
+  border: 1px solid var(--ol-faint);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  cursor: pointer;
+  color: var(--ol-fg);
+}
+
+.toggle + .toggle {
+  border-top: 1px solid var(--ol-faint);
+}
+
+.toggle:hover {
+  background: var(--ol-hover);
+}
+
+.toggle input {
+  appearance: none;
+  flex: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--ol-faint);
+  position: relative;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.toggle input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+  transition: transform 120ms ease;
+}
+
+.toggle input:checked {
+  background: var(--ol-accent);
+}
+
+.toggle input:checked::after {
+  transform: translateX(14px);
+}
+
+details {
+  display: grid;
+  gap: 8px;
+}
+
+summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::before {
+  content: "›";
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 120ms ease;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+summary .count {
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+details[open] > .toggles {
+  margin-top: 8px;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ol-faint);
+  font-size: 12.5px;
+  color: var(--ol-muted);
+}
+
+footer button {
+  all: unset;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ol-faint);
+  color: var(--ol-fg-strong);
+  font-weight: 600;
+}
+
+footer button:hover {
+  background: var(--ol-hover);
+}
+
+:is(button, input, summary):focus-visible {
+  outline: 2px solid var(--ol-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "OBB",
+  "version": "0.1.3",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs4rz3sXg+78rw3+aFeFG4xs1GGMcUm2mHUu2qzEJLD51i9mjky1bnYd+8fYmQDR5HBkEhpoTJOC0NXkrNN6V/G9i4e/5Bp0NXiw04RL9su7t3ZarkIwWN03V0gguthp7TLuAZpHoTyo6CVSvOoy5coM0hLo4JPGbYzYTNbP4PqhnYI/2tOY1alqU2zWvBqdpTIfD/tc9kh3PNvl29HMdwmBn043lL/0Yidjw1bXzKTSEBhnaYC9c+b5jxF/Le9iSETKli26eCmQa3nMpc5L0iyKhCKgV456uksqY8iOpEfw51PtWKroP77gweDRw66BOHxW2SUV2W+aztM9QVyiWTQIDAQAB",
+  "description": "Fastmail-style keyboard shortcuts, less clutter, and a calmer look for Outlook on the web.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://outlook.cloud.microsoft/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_title": "OBB",
+    "default_popup": "options.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  }
+}
