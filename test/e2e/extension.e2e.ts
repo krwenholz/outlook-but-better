@@ -1,7 +1,7 @@
 import { readdir } from "node:fs/promises";
 import type { BrowserContext, Page } from "playwright";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { actions, launch, openFixture, recordActions } from "./harness.ts";
+import { actions, launch, openFixture, openOptions, recordActions } from "./harness.ts";
 
 let context: BrowserContext;
 let page: Page;
@@ -132,5 +132,30 @@ describe("extension on the inbox fixture", () => {
     await page.keyboard.press("y");
     await page.keyboard.press("y");
     expect(await actions(page)).toEqual(["click:Archive"]);
+  });
+});
+
+// Reloads the extension, so it gets a browser of its own.
+describe("after OBB is reloaded", () => {
+  it("offers to reload tabs still running the old copy", async () => {
+    const own = await launch();
+    try {
+      const tab = await openFixture(own, "inbox");
+      await recordActions(tab);
+      const options = await openOptions(own);
+      await options.evaluate(() => chrome.runtime.reload()).catch(() => {});
+      await tab.bringToFront();
+      await tab.keyboard.press("y");
+      const button = () =>
+        tab.evaluate(
+          () =>
+            document.querySelector("overlook-root")?.shadowRoot?.querySelector(".notice .action")
+              ?.textContent ?? null,
+        );
+      await expect.poll(button).toBe("Reload tab");
+      expect(await actions(tab)).toEqual([]);
+    } finally {
+      await own.close();
+    }
   });
 });

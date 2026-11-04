@@ -51,12 +51,30 @@ let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
 export function toast(message: string, ms = 2500): void {
   const node = singleton("toast");
+  node.classList.remove("notice");
   node.textContent = message;
   node.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
     node.hidden = true;
   }, ms);
+}
+
+/** A toast that stays until acted on: a message, one action button, and a dismiss ×. */
+export function notice(message: string, action: string, onAction: () => void): void {
+  const node = singleton("toast");
+  clearTimeout(toastTimer);
+  const button = el("button", "action", action);
+  button.addEventListener("click", onAction);
+  const close = el("button", "close", "×");
+  close.setAttribute("aria-label", "Dismiss");
+  close.addEventListener("click", () => {
+    node.hidden = true;
+  });
+  node.replaceChildren(el("span", "", message), button, close);
+  node.classList.add("notice");
+  node.hidden = false;
+  button.focus();
 }
 
 /** The pending-prefix hint, e.g. "G … m Mail · c Calendar". Pass null to hide. */

@@ -1,6 +1,6 @@
 {
   "name": "obb",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "type": "module",
   "description": "Chrome extension that makes Outlook on the web tolerable",

@@ -13,7 +13,7 @@ import {
   tagElements,
 } from "./selectors.ts";
 import { applyToDocument, loadSettings, onSettingsChanged, type Settings } from "./settings.ts";
-import { isFromOverlay, isModalOpen, showHealthBadge, showHint, toast } from "./ui/overlay.ts";
+import { isFromOverlay, isModalOpen, notice, showHealthBadge, showHint } from "./ui/overlay.ts";
 
 const LOG = "[obb]";
 const APP_READY_TIMEOUT_MS = 20_000;
@@ -129,7 +129,7 @@ function isOrphaned(): boolean {
   if (chrome.runtime?.id) return false;
   if (!orphanNoticeShown) {
     orphanNoticeShown = true;
-    toast("OBB was updated. Reload this tab to use the new version.", 8000);
+    notice("OBB was updated.", "Reload tab", () => location.reload());
   }
   return true;
 }
@@ -175,6 +175,10 @@ async function main(): Promise<void> {
   applySettings(await loadSettings());
   onSettingsChanged(applySettings);
   mountKeymap();
+  // Coming back to this tab after reloading OBB from its popup: offer the refresh right away.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) isOrphaned();
+  });
   await whenAppReady();
   tagElements();
   syncReadingPane();

@@ -46,6 +46,29 @@
   transform: translateX(-50%);
 }
 
+.toast.notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+}
+
+.action {
+  all: unset;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--ol-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.action:focus-visible,
+.close:focus-visible {
+  outline: 2px solid var(--ol-accent);
+  outline-offset: 2px;
+}
+
 .hint {
   bottom: 24px;
   right: 24px;
