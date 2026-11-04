@@ -2,6 +2,7 @@
 // script runs exactly as it would on the real site. No network by default: every other request is
 // aborted. Also used by scripts/screenshots.ts, which lets Outlook's public CDN through for fonts.
 
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -67,7 +68,29 @@ export async function openFixture(
   return page;
 }
 
-/** Records clicks and synthetic key events on the page, so tests can see what Overlook did. */
+/** Chrome derives an unpacked extension's id from its folder path: sha256, hex digits as a–p. */
+export function extensionId(): string {
+  const hex = createHash("sha256").update(path.resolve("dist")).digest("hex").slice(0, 32);
+  return [...hex].map((c) => String.fromCharCode(97 + Number.parseInt(c, 16))).join("");
+}
+
+/** Opens the options page (the toolbar popup) with the given settings already saved. */
+export async function openOptions(
+  context: BrowserContext,
+  settings: Record<string, unknown> = {},
+): Promise<Page> {
+  const page = await context.newPage();
+  await page.goto(`chrome-extension://${extensionId()}/options.html`);
+  await page.evaluate(async (s) => {
+    await chrome.storage.sync.clear();
+    await chrome.storage.sync.set(s);
+  }, settings);
+  await page.reload();
+  await page.waitForSelector(".swatch");
+  return page;
+}
+
+/** Records clicks and synthetic key events on the page, so tests can see what OBB did. */
 export async function recordActions(page: Page): Promise<void> {
   await page.evaluate(() => {
     const log: string[] = [];

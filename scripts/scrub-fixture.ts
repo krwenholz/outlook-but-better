@@ -173,7 +173,7 @@ function maskPhones(text: string): string {
 
 /**
  * State words Outlook puts at the start of a message row's label ("Unread Has attachments
- * Quarterly numbers…"). They identify no one, and Overlook reads them (isUnreadRow).
+ * Quarterly numbers…"). They identify no one, and OBB reads them (isUnreadRow).
  */
 const ROW_STATES = [
   "Unread",

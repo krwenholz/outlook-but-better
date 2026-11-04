@@ -1,6 +1,6 @@
 # DOM survey
 
-Anchors for everything Overlook hides or drives. `src/selectors.ts` must agree with this file.
+Anchors for everything OBB hides or drives. `src/selectors.ts` must agree with this file.
 Source: a saved inbox page from Oct 2026 (`test/fixtures/inbox.html`), English UI, light mode,
 Gmail keyboard shortcuts on.
 
@@ -51,7 +51,7 @@ From the ribbon's own tooltips: `C` new mail, `#` delete, `E` archive, `V` move 
 ## Dark mode
 
 Outlook writes `--native-scrollbar-color-scheme: light|dark` among the palette variables on
-`<html>`. Overlook mirrors it to `data-overlook-outlook-scheme` for "Follow Outlook" palettes.
+`<html>`. OBB mirrors it to `data-overlook-outlook-scheme` for "Follow Outlook" palettes.
 Unverified in dark mode.
 
 ## Open questions

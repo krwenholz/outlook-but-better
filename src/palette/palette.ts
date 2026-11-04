@@ -33,7 +33,7 @@ function appTargets(): FolderNode[] {
 export function openFolderPalette(): void {
   const folders = [...appTargets(), ...readFolderTree()];
   if (folders.length === 0) {
-    toast("Overlook couldn't find the folder pane");
+    toast("OBB couldn't find the folder pane");
     return;
   }
 

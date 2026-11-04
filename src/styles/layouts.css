@@ -4,7 +4,7 @@
    Surfaces apply whenever a palette is chosen. Layouts rearrange panes:
      calm      three panes, quiet chrome
      fastmail  list first; pair with Outlook's "Reading pane: Hide" setting so a message opens
-               full width, as in Fastmail
+               full width, as in Fastmail. Never sets pane widths, so resizing keeps working.
      focus     no app rail or folder pane (use `g` to switch folders), centred content
    None of them hide the reading pane themselves: when Outlook shows it, it holds the open
    message. */
@@ -196,26 +196,6 @@ html[data-overlook-layout="fastmail"] [data-overlook~="group-header"] {
   display: none !important;
 }
 
-html[data-overlook-layout="fastmail"] [data-overlook~="list-pane"] {
-  flex: 1 1 auto !important;
-  max-width: none !important;
-  width: auto !important;
-}
-
-/* The list fills whatever width its pane gets (Outlook pins the inner region to a fixed width). */
-html:is([data-overlook-layout="fastmail"], [data-overlook-layout="focus"])
-  [data-overlook~="list-pane"]
-  [role="complementary"] {
-  flex: 1 1 auto !important;
-}
-
-html:is([data-overlook-layout="fastmail"], [data-overlook-layout="focus"])
-  [data-overlook~="list-pane"]
-  :is([role="complementary"], [role="complementary"] > div, [data-overlook~="message-list"]) {
-  width: auto !important;
-  max-width: none !important;
-}
-
 html[data-overlook-layout="fastmail"] [data-overlook~="message-row"] {
   padding-block: 4px !important;
   border-left: 0 !important;
@@ -238,7 +218,9 @@ html[data-overlook-layout="focus"]
   display: none !important;
 }
 
-html[data-overlook-layout="focus"] [data-overlook~="list-pane"] {
+/* Only without a reading pane (Outlook's "Reading pane: Hide"): with one, Outlook owns the pane
+   widths and its drag-to-resize must keep working. */
+html[data-overlook-layout="focus"][data-overlook-reading-pane="none"] [data-overlook~="list-pane"] {
   flex: 0 1 760px !important;
   width: auto !important;
   max-width: 760px !important;

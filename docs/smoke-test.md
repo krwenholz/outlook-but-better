@@ -1,7 +1,7 @@
 # Smoke test (under two minutes)
 
 Run after any Outlook UI change or extension update.
-1. Reload Outlook. No "selectors broken" badge in the top right. Console shows `[overlook] health: ok`.
+1. Reload Outlook. No "selectors broken" badge in the top right. Console shows `[obb] health: ok`.
 2. Clutter toggles that are on are hidden, with no empty gaps left behind.
 3. `j` / `k` move between conversations; `x` selects.
 4. `y` archives the current conversation; `z` undoes it.

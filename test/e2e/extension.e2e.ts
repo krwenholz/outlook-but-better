@@ -68,6 +68,20 @@ describe("extension on the inbox fixture", () => {
     await expect.poll(folderPaneBackground).toBe("rgb(238, 232, 213)"); // Solarized base2
   });
 
+  it("leaves pane widths to Outlook while a reading pane is showing", async () => {
+    const listWidth = (layout: string) =>
+      page.evaluate((l) => {
+        document.documentElement.dataset.overlookLayout = l;
+        const pane = document.querySelector('[data-overlook~="list-pane"]');
+        return pane?.getBoundingClientRect().width;
+      }, layout);
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.overlookReadingPane))
+      .toBe("shown");
+    const stock = await listWidth("outlook");
+    for (const layout of ["calm", "fastmail", "focus"]) expect(await listWidth(layout)).toBe(stock);
+  });
+
   it("archives by clicking Outlook's own Archive button", async () => {
     await page.keyboard.press("y");
     expect(await actions(page)).toEqual(["click:Archive"]);

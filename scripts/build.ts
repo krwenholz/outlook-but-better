@@ -8,7 +8,12 @@ const outdir = "dist";
 const styles = ["palettes", "layouts", "declutter", "density"].map(
   (name) => `src/styles/${name}.css`,
 );
-const staticFiles = ["manifest.json", "src/options/options.html", ...styles];
+const staticFiles = [
+  "manifest.json",
+  "src/options/options.html",
+  "src/options/options.css",
+  ...styles,
+];
 
 /** Copies static files and concatenates the page stylesheets into content.css. */
 const statics: esbuild.Plugin = {
@@ -20,6 +25,11 @@ const statics: esbuild.Plugin = {
       await cp("icons", `${outdir}/icons`, { recursive: true, filter: (f) => !f.endsWith(".svg") });
       const css = await Promise.all(styles.map((f) => readFile(f, "utf8")));
       await writeFile(`${outdir}/content.css`, css.join("\n"));
+      // The options page wears the user's palette, so it gets the palettes too.
+      const optionsCss = await Promise.all(
+        ["src/styles/palettes.css", "src/options/options.css"].map((f) => readFile(f, "utf8")),
+      );
+      await writeFile(`${outdir}/options.css`, optionsCss.join("\n"));
       if (watch) console.log(`[build] ${new Date().toLocaleTimeString()} rebuilt ${outdir}/`);
     });
   },

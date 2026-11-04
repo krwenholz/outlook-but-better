@@ -1,4 +1,4 @@
-// Overlook's own UI lives in one shadow root, so Outlook's CSS cannot reach it and ours cannot
+// OBB's own UI lives in one shadow root, so Outlook's CSS cannot reach it and ours cannot
 // leak into Outlook. Everything here is plain DOM; no framework.
 
 import css from "./overlay.css";
@@ -21,7 +21,7 @@ export function overlayRoot(): ShadowRoot {
   return shadow;
 }
 
-/** True when the event came from inside Overlook's own UI. */
+/** True when the event came from inside OBB's own UI. */
 export function isFromOverlay(event: Event): boolean {
   return shadow !== null && event.composedPath().includes(shadow.host);
 }
@@ -81,7 +81,7 @@ export function showHealthBadge(broken: readonly string[], onDismiss: () => void
     node.hidden = true;
     onDismiss();
   });
-  node.append(el("span", "", `Overlook: ${broken.length} selector(s) broken`), close);
+  node.append(el("span", "", `OBB: ${broken.length} selector(s) broken`), close);
 }
 
 export function showHelp(rows: readonly { keys: string; description: string }[]): void {

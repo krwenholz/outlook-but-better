@@ -1,16 +1,19 @@
-/* Palettes. Each defines Overlook's own --ol-* tokens, then maps them onto the variables Outlook
+/* Palettes. Each defines OBB's own --ol-* tokens, then maps them onto the variables Outlook
    already colours itself with: the Fabric palette it writes on <html> (--white, --neutral*,
    --theme*) and Fluent v9 tokens (--colorNeutral*, --colorBrand*). Overriding those recolours
-   Outlook coherently, including surfaces Overlook never tags.
+   Outlook coherently, including surfaces OBB never tags.
 
    Fluent re-declares its tokens on every provider element, so the mapping targets those too
    through Fluent's static "fui-FluentProvider" class name (part of its public API, not a
    generated class).
 
-   Mode: "auto" follows Outlook's own light/dark mode (data-overlook-outlook-scheme). */
+   Mode: "auto" follows Outlook's own light/dark mode (data-overlook-outlook-scheme).
+
+   Token blocks also match [data-overlook-swatch], so the options page can paint a preview card
+   in any palette without switching the whole page. */
 
 /* --- Solarized (Ethan Schoonover) --- */
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="solarized"][data-overlook-mode="light"],
   [data-overlook-palette="solarized"][data-overlook-mode="auto"]:not(
     [data-overlook-outlook-scheme="dark"]
@@ -34,7 +37,7 @@ html:is(
   --ol-scheme: light;
 }
 
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="solarized"][data-overlook-mode="dark"],
   [data-overlook-palette="solarized"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
 ) {
@@ -57,7 +60,7 @@ html:is(
 }
 
 /* --- Base16 Default (Chris Kempson) --- */
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="base16"][data-overlook-mode="light"],
   [data-overlook-palette="base16"][data-overlook-mode="auto"]:not(
     [data-overlook-outlook-scheme="dark"]
@@ -81,7 +84,7 @@ html:is(
   --ol-scheme: light;
 }
 
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="base16"][data-overlook-mode="dark"],
   [data-overlook-palette="base16"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
 ) {
@@ -104,7 +107,7 @@ html:is(
 }
 
 /* --- Fastmail-inspired: navy chrome, white page, clear blue --- */
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="fastmail"][data-overlook-mode="light"],
   [data-overlook-palette="fastmail"][data-overlook-mode="auto"]:not(
     [data-overlook-outlook-scheme="dark"]
@@ -128,7 +131,7 @@ html:is(
   --ol-scheme: light;
 }
 
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="fastmail"][data-overlook-mode="dark"],
   [data-overlook-palette="fastmail"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
 ) {
@@ -151,7 +154,7 @@ html:is(
 }
 
 /* --- Paper: warm off-white, ink, a rust accent, serif subjects --- */
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="paper"][data-overlook-mode="light"],
   [data-overlook-palette="paper"][data-overlook-mode="auto"]:not(
     [data-overlook-outlook-scheme="dark"]
@@ -176,7 +179,7 @@ html:is(
   --ol-font-reading: "Iowan Old Style", Charter, "Charis SIL", Georgia, serif;
 }
 
-html:is(
+:is(html, [data-overlook-swatch]):is(
   [data-overlook-palette="paper"][data-overlook-mode="dark"],
   [data-overlook-palette="paper"][data-overlook-mode="auto"][data-overlook-outlook-scheme="dark"]
 ) {

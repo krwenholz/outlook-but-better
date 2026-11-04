@@ -2,9 +2,15 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-04: Renamed to OBB
+
+The user-facing name is OBB (outlook-but-better). Internal identifiers keep the drafting name:
+`data-overlook-*` attributes, `--ol-*` tokens and `<overlook-root>`. Renaming them would only
+churn every stylesheet and test, and nobody sees them.
+
 ## 2026-11-04: No synthetic keystrokes; read/unread drives the button
 
-On the live site, `. u` (dispatching Outlook's Gmail-mode Shift+U) did nothing, so Overlook no
+On the live site, `. u` (dispatching Outlook's Gmail-mode Shift+U) did nothing, so OBB no
 longer sends keystrokes at all. Mark read/unread click the ribbon's Read / Unread toggle, and
 only when the selected rows (judged by the "Unread" that starts their labels) aren't already in
 the wanted state. Drive actions show a toast when their button is missing instead of falling
@@ -53,8 +59,8 @@ in `docs/capturing-pages.md` captures runtime rules too, which should make the s
 ## 2026-10-24: Palettes recolour Outlook through its own variables
 
 Outlook paints itself from the Fabric palette on `<html>` (`--white`, `--neutral*`, `--theme*`)
-and Fluent v9 tokens (`--colorNeutral*`, `--colorBrand*`). Palettes set Overlook tokens
-(`--ol-*`) and map them onto both with `!important`, so surfaces Overlook never tags still match.
+and Fluent v9 tokens (`--colorNeutral*`, `--colorBrand*`). Palettes set OBB tokens
+(`--ol-*`) and map them onto both with `!important`, so surfaces OBB never tags still match.
 Fluent re-declares tokens on provider elements, targeted via its public `fui-FluentProvider`
 class. Dark palettes show email bodies as a light "letter" because bodies carry their own colours.
 
@@ -107,7 +113,7 @@ the extension by hand.
 so DOM knowledge stays in one file and every toggle is pure CSS. A MutationObserver re-tags on
 React re-renders (batched per animation frame).
 
-## 2026-10-24: Overlook's UI lives in a shadow root
+## 2026-10-24: OBB's UI lives in a shadow root
 
 The palette, help, hints and health badge render inside one `<overlook-root>` shadow root so
 Outlook's CSS cannot restyle them and ours cannot leak out. The keymap ignores events from inside

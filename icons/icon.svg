@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
-  <title>Overlook</title>
+  <title>OBB</title>
   <rect width="128" height="128" rx="28" fill="#22324f"/>
   <path d="M18 64c12-20 28-30 46-30s34 10 46 30c-12 20-28 30-46 30S30 84 18 64Z" fill="none" stroke="#e8ecf3" stroke-width="9" stroke-linejoin="round"/>
   <circle cx="64" cy="64" r="14" fill="#4f8ef7"/>

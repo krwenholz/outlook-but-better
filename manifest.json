@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Overlook",
-  "version": "0.1.1",
+  "name": "OBB",
+  "version": "0.1.2",
   "description": "Fastmail-style keyboard shortcuts, less clutter, and a calmer look for Outlook on the web.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -27,7 +27,7 @@
     "open_in_tab": false
   },
   "action": {
-    "default_title": "Overlook",
+    "default_title": "OBB",
     "default_popup": "options.html",
     "default_icon": {
       "16": "icons/icon-16.png",

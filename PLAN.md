@@ -1,6 +1,6 @@
-# Overlook: a Chrome extension that makes Outlook on the web tolerable
+# OBB: a Chrome extension that makes Outlook on the web tolerable
 
-"Overlook" is a working name. Rename freely.
+"OBB" (outlook-but-better) is the name; it was "Overlook" while this plan was drafted.
 
 ## Why this exists
 
@@ -81,7 +81,7 @@ This is the target binding set. Kyle should confirm it against his own Fastmail 
 | ----------------------------- | ------------------------------------------- | ------------- | --------------------------------------------- |
 | `c`                           | Compose                                     | Anywhere      | Pass through (Outlook `C`)                    |
 | `/`                           | Focus search                                | Anywhere      | Pass through                                  |
-| `?`                           | Show Overlook's shortcut help               | Anywhere      | Extension overlay                             |
+| `?`                           | Show OBB's shortcut help                    | Anywhere      | Extension overlay                             |
 | `Esc`                         | Close, cancel, or return to list            | Anywhere      | Pass through                                  |
 | `j` / `k`                     | Next / previous conversation                | List, reading | Pass through                                  |
 | `o` or `Enter`                | Open conversation                           | List          | Pass through                                  |
@@ -138,7 +138,7 @@ Each phase ends with something Kyle can use. Exit criteria are listed so the Cla
 
 - Implement the full shortcut map, including sequences and the pending-prefix hint.
 - Ship the folder palette for `g` and `m`.
-- Add a `?` help overlay listing Overlook's bindings.
+- Add a `?` help overlay listing OBB's bindings.
 - Unit tests for the sequence engine and action table.
 
 **Exit criteria:** Kyle can triage a normal day of mail without touching the mouse.
@@ -174,7 +174,7 @@ There is no way to run Outlook on the web in CI, so testing is split by layer.
 ## Suggested repo layout
 
 ```
-overlook/
+outlook-but-better/
   manifest.json
   src/
     content.ts          entry point: runs health check, tags elements, mounts layers

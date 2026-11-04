@@ -7,7 +7,7 @@
 //                 the live site in Nov 2026, so there is no keystroke strategy.)
 //   toggle      – click a toggle button (Read / Unread) only if the selection isn't already in
 //                 the wanted state.
-//   extension   – Overlook's own UI (palette, help).
+//   extension   – OBB's own UI (palette, help).
 //   todo        – not decided yet; the key is swallowed and a hint says so.
 //
 // Outlook's Gmail-mode keys come from its own ribbon tooltips in the Oct 2026 capture:

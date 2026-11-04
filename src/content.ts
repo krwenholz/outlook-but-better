@@ -15,7 +15,7 @@ import {
 import { applyToDocument, loadSettings, onSettingsChanged, type Settings } from "./settings.ts";
 import { isFromOverlay, isModalOpen, showHealthBadge, showHint } from "./ui/overlay.ts";
 
-const LOG = "[overlook]";
+const LOG = "[obb]";
 const APP_READY_TIMEOUT_MS = 20_000;
 const HEALTH_SETTLE_MS = 1_000;
 /** Waits between re-checks of a failed health check before it is reported. */
@@ -29,6 +29,14 @@ function applySettings(next: Settings): void {
   applyToDocument(settings, document.documentElement);
   syncColorScheme();
   if (!settings.healthIndicator) showHealthBadge([], () => {});
+}
+
+/** Records whether Outlook shows a reading pane, so layouts only reshape panes when it doesn't. */
+function syncReadingPane(): void {
+  const state = resolve("readingPane") ? "shown" : "none";
+  if (document.documentElement.dataset.overlookReadingPane !== state) {
+    document.documentElement.dataset.overlookReadingPane = state;
+  }
 }
 
 /** Mirrors Outlook's own light/dark mode onto <html> so "Follow Outlook" palettes can match it. */
@@ -102,6 +110,7 @@ function watchPage(): void {
       scheduled = false;
       tagElements();
       syncColorScheme();
+      syncReadingPane();
       if (location.href !== lastUrl) {
         lastUrl = location.href;
         scheduleHealthCheck();
@@ -152,6 +161,7 @@ async function main(): Promise<void> {
   mountKeymap();
   await whenAppReady();
   tagElements();
+  syncReadingPane();
   scheduleHealthCheck();
   watchPage();
 }

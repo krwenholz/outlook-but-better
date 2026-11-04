@@ -26,7 +26,7 @@ interface Choice {
 
 export const FEATURES = {
   healthIndicator: {
-    label: "Show an indicator when Outlook's page changes break Overlook",
+    label: "Show an indicator when Outlook's page changes break OBB",
     group: "General",
     default: true,
   },
