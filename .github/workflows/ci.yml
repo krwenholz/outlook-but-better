@@ -30,3 +30,36 @@ jobs:
       - name: Check (lint, typecheck, unit, build, e2e)
         timeout-minutes: 8
         run: mise run check
+
+  # After a green push to main: refresh the `dist` branch (what installs `git pull`) and, when the
+  # manifest version is new, publish a GitHub Release with the zip.
+  release:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        timeout-minutes: 2
+      - uses: jdx/mise-action@v2
+        timeout-minutes: 5
+      - name: Install dependencies
+        timeout-minutes: 5
+        run: mise run install
+      - name: Publish the dist branch
+        timeout-minutes: 3
+        run: mise run release -- --push
+      - name: Create a GitHub Release for a new version
+        timeout-minutes: 3
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p 'require("./manifest.json").version')
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "v$version already released"
+          else
+            gh release create "v$version" ".cache/obb-$version.zip" \
+              --title "OBB $version" --generate-notes --target "$GITHUB_SHA"
+          fi

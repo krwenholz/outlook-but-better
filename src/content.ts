@@ -13,7 +13,7 @@ import {
   tagElements,
 } from "./selectors.ts";
 import { applyToDocument, loadSettings, onSettingsChanged, type Settings } from "./settings.ts";
-import { isFromOverlay, isModalOpen, showHealthBadge, showHint } from "./ui/overlay.ts";
+import { isFromOverlay, isModalOpen, showHealthBadge, showHint, toast } from "./ui/overlay.ts";
 
 const LOG = "[obb]";
 const APP_READY_TIMEOUT_MS = 20_000;
@@ -119,6 +119,21 @@ function watchPage(): void {
   }).observe(document.body, { childList: true, subtree: true });
 }
 
+let orphanNoticeShown = false;
+
+/**
+ * After OBB is reloaded or updated, this copy of the content script keeps running in tabs that
+ * were already open, cut off from the extension. Say so once instead of half-working.
+ */
+function isOrphaned(): boolean {
+  if (chrome.runtime?.id) return false;
+  if (!orphanNoticeShown) {
+    orphanNoticeShown = true;
+    toast("OBB was updated. Reload this tab to use the new version.", 8000);
+  }
+  return true;
+}
+
 function isEditable(target: EventTarget | undefined): boolean {
   if (!(target instanceof HTMLElement)) return false;
   return target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
@@ -131,6 +146,7 @@ function mountKeymap(): void {
     "keydown",
     (event) => {
       if (!settings.keymap || !event.isTrusted || isFromOverlay(event) || isModalOpen()) return;
+      if (isOrphaned()) return;
       if (isEditable(event.composedPath()[0])) return;
       const key = keyFromEvent(event);
       if (key === null) return;

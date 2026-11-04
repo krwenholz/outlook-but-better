@@ -63,6 +63,11 @@ description = "Build the README's animated preview (docs/preview.webp) from scre
 depends = ["screenshots"]
 run = "node scripts/preview.ts"
 
+[tasks.release]
+description = "Publish dist/ to the `dist` branch and zip it (add -- --push to push the branch)"
+depends = ["build"]
+run = "node scripts/release.ts"
+
 [tasks.health]
 description = "Run the selector health check against a saved page: mise run health <page.html>"
 run = "node scripts/health.ts"

@@ -220,6 +220,8 @@ function render(settings: Settings): void {
 async function main(): Promise<void> {
   const version = document.getElementById("version");
   if (version) version.textContent = `v${chrome.runtime.getManifest().version}`;
+  // Picks up new files on disk (after `git pull` in the install folder); see README.
+  document.getElementById("reload")?.addEventListener("click", () => chrome.runtime.reload());
   let settings = await loadSettings();
   render(settings);
   onSettingsChanged((next) => {

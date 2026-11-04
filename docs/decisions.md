@@ -2,6 +2,24 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-05: Installs and updates from the `dist` branch
+
+Chrome only auto-updates extensions from the Web Store or ones force-installed by policy, so an
+unpacked install needs some step to update. To make that step tiny:
+- `mise run release` commits the build to a `dist` branch (fast-forward, never force-pushed). An
+  install is a clone of that branch; an update is `git pull` plus **Reload OBB** in the popup
+  (`chrome.runtime.reload()`). CI does this after every green push to main and publishes a
+  GitHub Release with a zip when the manifest version is new.
+- The manifest carries a public `key`, which fixes the extension id regardless of folder, so
+  `chrome.storage.sync` settings survive updates and moves. The private key isn't kept; it's
+  only needed to pack a .crx, which unpacked installs don't use. The Web Store rejects a
+  manifest `key`, so strip it if OBB is ever listed there.
+- Tabs left open across a reload keep the old content script, cut off from the extension; it
+  shows a one-time "reload this tab" toast instead of half-working.
+
+An unlisted Chrome Web Store listing would make updates fully automatic, at the cost of a
+developer account and review. Revisit if this is shared with colleagues.
+
 ## 2026-11-04: Renamed to OBB
 
 The user-facing name is OBB (outlook-but-better). Internal identifiers keep the drafting name:

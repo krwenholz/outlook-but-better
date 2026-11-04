@@ -11,6 +11,7 @@ phases, and `docs/decisions.md` before revisiting a settled choice.
 - `mise run dev`: rebuild `dist/` on change; load `dist/` unpacked in `chrome://extensions`
 - `mise run fmt`: auto-fix lint and formatting
 - `mise run screenshots [name…]` / `mise run preview`: README images and animated preview (preview needs ffmpeg)
+- `mise run release [-- --push]`: publish the build to the `dist` branch and zip it (CI does this on main)
 - `mise run scrub` / `health` / `fixtures:assets`: fixture tooling (see `docs/capturing-pages.md`)
 - `mise tasks` lists the rest
 

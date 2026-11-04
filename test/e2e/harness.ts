@@ -3,7 +3,7 @@
 // aborted. Also used by scripts/screenshots.ts, which lets Outlook's public CDN through for fonts.
 
 import { createHash } from "node:crypto";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { type BrowserContext, chromium, type Page } from "playwright";
@@ -68,9 +68,10 @@ export async function openFixture(
   return page;
 }
 
-/** Chrome derives an unpacked extension's id from its folder path: sha256, hex digits as a–p. */
+/** Chrome derives the id from the manifest's public key: sha256, first 32 hex digits as a–p. */
 export function extensionId(): string {
-  const hex = createHash("sha256").update(path.resolve("dist")).digest("hex").slice(0, 32);
+  const { key } = JSON.parse(readFileSync("manifest.json", "utf8")) as { key: string };
+  const hex = createHash("sha256").update(Buffer.from(key, "base64")).digest("hex").slice(0, 32);
   return [...hex].map((c) => String.fromCharCode(97 + Number.parseInt(c, 16))).join("");
 }
 
