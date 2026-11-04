@@ -15,7 +15,8 @@ mise run build        # writes dist/
 ```
 
 Then open `chrome://extensions`, turn on Developer mode, choose **Load unpacked**, and pick `dist/`.
-Open Outlook and press `?` for the shortcut list. Options live on the extension's details page.
+Open Outlook and press `?` for the shortcut list. Click the toolbar icon for options (pin it from
+Chrome's puzzle-piece menu). `g` jumps to a folder or to Mail, Calendar or People.
 
 ## Looks
 

@@ -2,11 +2,11 @@
 //
 // Strategies (PLAN.md, Keymap layer):
 //   passthrough – Outlook's Gmail shortcut mode already does it; let the key through.
-//   translate   – dispatch Outlook's own shortcut. Only works if Outlook honours synthetic
-//                 (isTrusted: false) events; still unverified on the live site.
-//   drive       – click a control found through the selector registry. React honours click(),
-//                 so this is the most reliable option; `key` is a translate fallback for when
-//                 the control is absent (e.g. collapsed into the ribbon's overflow menu).
+//   drive       – click a control found through the selector registry. React honours click().
+//                 (Dispatching Outlook's own shortcut as a synthetic key event did nothing on
+//                 the live site in Nov 2026, so there is no keystroke strategy.)
+//   toggle      – click a toggle button (Read / Unread) only if the selection isn't already in
+//                 the wanted state.
 //   extension   – Overlook's own UI (palette, help).
 //   todo        – not decided yet; the key is swallowed and a hint says so.
 //
@@ -20,8 +20,8 @@ export type ExtensionCommand = "help" | "palette-go";
 
 export type Strategy =
   | { kind: "passthrough" }
-  | { kind: "translate"; key: string }
-  | { kind: "drive"; target: SelectorName; key?: string }
+  | { kind: "drive"; target: SelectorName }
+  | { kind: "toggle"; target: SelectorName; want: "read" | "unread" }
   | { kind: "extension"; command: ExtensionCommand }
   | { kind: "todo" };
 
@@ -32,9 +32,13 @@ export interface Action {
 
 const passthrough: Strategy = { kind: "passthrough" };
 const todo: Strategy = { kind: "todo" };
-const translate = (key: string): Strategy => ({ kind: "translate", key });
-const drive = (target: SelectorName, key?: string): Strategy => ({ kind: "drive", target, key });
+const drive = (target: SelectorName): Strategy => ({ kind: "drive", target });
 const extension = (command: ExtensionCommand): Strategy => ({ kind: "extension", command });
+const readState = (want: "read" | "unread"): Strategy => ({
+  kind: "toggle",
+  target: "readUnreadButton",
+  want,
+});
 
 export const ACTIONS = {
   compose: { description: "Compose", strategy: passthrough },
@@ -47,18 +51,18 @@ export const ACTIONS = {
   selectRange: { description: "Select range since last selection", strategy: todo },
   selectAll: { description: "Select all", strategy: todo },
   selectNone: { description: "Select none", strategy: todo },
-  archive: { description: "Archive", strategy: drive("archiveButton", "e") },
+  archive: { description: "Archive", strategy: drive("archiveButton") },
   archivePrevious: { description: "Archive, then open previous", strategy: todo },
   archiveNext: { description: "Archive, then open next", strategy: todo },
-  delete: { description: "Delete", strategy: drive("deleteButton", "#") },
+  delete: { description: "Delete", strategy: drive("deleteButton") },
   junk: { description: "Report junk", strategy: passthrough },
   // Outlook's own "Move to" picker has folder search, which covers Fastmail's `m` until the
   // palette can move messages itself (docs/decisions.md).
-  move: { description: "Move to folder…", strategy: drive("moveButton", "v") },
-  goTo: { description: "Go to folder…", strategy: extension("palette-go") },
+  move: { description: "Move to folder…", strategy: drive("moveButton") },
+  goTo: { description: "Go to folder or app…", strategy: extension("palette-go") },
   snooze: { description: "Snooze", strategy: passthrough },
-  markRead: { description: "Mark read", strategy: translate("I") },
-  markUnread: { description: "Mark unread", strategy: translate("U") },
+  markRead: { description: "Mark read", strategy: readState("read") },
+  markUnread: { description: "Mark unread", strategy: readState("unread") },
   reply: { description: "Reply", strategy: passthrough },
   replyAll: { description: "Reply all", strategy: passthrough },
   forward: { description: "Forward", strategy: passthrough },

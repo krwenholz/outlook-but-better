@@ -1,7 +1,7 @@
-// Folder palette: Fastmail's `g` (go to folder) type-ahead picker. Moving (`m`) uses Outlook's
-// own "Move to" picker for now; see docs/decisions.md.
+// Folder palette: Fastmail's `g` (go to folder) type-ahead picker, plus Outlook's apps.
+// Moving (`m`) uses Outlook's own "Move to" picker for now; see docs/decisions.md.
 
-import { type FolderNode, readFolderTree } from "../selectors.ts";
+import { type FolderNode, readFolderTree, resolve, type SelectorName } from "../selectors.ts";
 import { el, overlayRoot, toast } from "../ui/overlay.ts";
 import { type FuzzyMatch, fuzzyFilter } from "./fuzzy.ts";
 
@@ -16,8 +16,22 @@ function highlight(text: string, indices: readonly number[]): DocumentFragment {
   return frag;
 }
 
+const APPS: [string, SelectorName][] = [
+  ["Mail", "mailApp"],
+  ["Calendar", "calendarApp"],
+  ["People", "peopleApp"],
+];
+
+/** Outlook's apps, listed alongside folders so `g` then "cal" switches to Calendar. */
+function appTargets(): FolderNode[] {
+  return APPS.flatMap(([name, target]) => {
+    const element = resolve(target);
+    return element ? [{ name, path: name, element }] : [];
+  });
+}
+
 export function openFolderPalette(): void {
-  const folders = readFolderTree();
+  const folders = [...appTargets(), ...readFolderTree()];
   if (folders.length === 0) {
     toast("Overlook couldn't find the folder pane");
     return;
@@ -27,7 +41,7 @@ export function openFolderPalette(): void {
   const backdrop = el("div", "backdrop");
   const panel = el("div", "panel palette");
   const input = el("input", "");
-  input.placeholder = "Go to folder…";
+  input.placeholder = "Go to folder, or Mail, Calendar, People…";
   input.setAttribute("aria-label", input.placeholder);
   const list = el("ul", "");
   list.setAttribute("role", "listbox");

@@ -17,6 +17,7 @@ const statics: esbuild.Plugin = {
     build.onEnd(async () => {
       await cp("manifest.json", `${outdir}/manifest.json`);
       await cp("src/options/options.html", `${outdir}/options.html`);
+      await cp("icons", `${outdir}/icons`, { recursive: true, filter: (f) => !f.endsWith(".svg") });
       const css = await Promise.all(styles.map((f) => readFile(f, "utf8")));
       await writeFile(`${outdir}/content.css`, css.join("\n"));
       if (watch) console.log(`[build] ${new Date().toLocaleTimeString()} rebuilt ${outdir}/`);

@@ -210,13 +210,29 @@ export const SELECTORS = {
   undoButton: { candidates: ['button[aria-label="Undo"]'], expect: "sometimes" },
   syncButton: { candidates: ["#owaSyncButton_container"], expect: "sometimes" },
   settingsButton: { candidates: ["#owaSettingsBtn_container"], expect: "always" },
-  mailApp: { candidates: ['button[aria-label="Mail"]'], within: "appRail", expect: "always" },
-  calendarApp: {
-    candidates: ['button[aria-label="Calendar"]'],
+  // App rail buttons. Fallbacks are the Microsoft 365 app ids Outlook puts in data-tid, the same
+  // across the Oct and Nov 2026 captures. The rail renders after the message list.
+  mailApp: {
+    candidates: ['button[aria-label="Mail"]', '[data-tid="ddea774c-382b-47d7-aab5-adc2139a802b"]'],
     within: "appRail",
     expect: "always",
   },
-  peopleApp: { candidates: ['button[aria-label="People"]'], within: "appRail", expect: "always" },
+  calendarApp: {
+    candidates: [
+      'button[aria-label="Calendar"]',
+      '[data-tid="8cbeb86f-83e1-43b5-aaba-cd3514322f0b"]',
+    ],
+    within: "appRail",
+    expect: "always",
+  },
+  peopleApp: {
+    candidates: [
+      'button[aria-label="People"]',
+      '[data-tid="355fbd79-3ba2-4554-8f2d-0300fde91f30"]',
+    ],
+    within: "appRail",
+    expect: "always",
+  },
 } as const satisfies Record<string, SelectorEntry>;
 
 const entry = (name: SelectorName): SelectorEntry => SELECTORS[name];
@@ -327,6 +343,18 @@ export function readFolderTree(root: ParentNode = document): FolderNode[] {
     folders.push({ name, path: stack.slice(1).filter(Boolean).join("/"), element });
   }
   return folders;
+}
+
+/** Message rows currently selected (or open) in the list. */
+export function selectedRows(root: ParentNode = document): Element[] {
+  return resolveAll("messageRow", root).filter(
+    (row) => row.getAttribute("aria-selected") === "true",
+  );
+}
+
+/** Outlook starts an unread row's accessible name with "Unread" (English UI). */
+export function isUnreadRow(row: Element): boolean {
+  return /^Unread\b/.test(row.getAttribute("aria-label") ?? "");
 }
 
 /** Outlook's current light/dark mode, from the palette variables it writes on <html>. */

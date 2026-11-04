@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Overlook",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fastmail-style keyboard shortcuts, less clutter, and a calmer look for Outlook on the web.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "permissions": ["storage"],
   "content_scripts": [
     {
@@ -19,5 +25,13 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false
+  },
+  "action": {
+    "default_title": "Overlook",
+    "default_popup": "options.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
   }
 }

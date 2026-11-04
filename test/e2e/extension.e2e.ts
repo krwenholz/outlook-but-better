@@ -25,7 +25,12 @@ const fixtures = (await readdir("test/fixtures")).filter((f) => f.endsWith(".htm
 describe("scrubbed Outlook fixtures", () => {
   it.each(fixtures)("%s has no broken selectors", async (file) => {
     const fixture = await openFixture(context, file.replace(/\.html$/, ""));
-    await fixture.waitForTimeout(300);
+    await fixture.waitForFunction(() => document.documentElement.dataset.overlookHealth, null, {
+      timeout: 20_000,
+    });
+    expect(await fixture.evaluate(() => document.documentElement.dataset.overlookHealth)).toBe(
+      "ok",
+    );
     expect(await badge(fixture)).toBeNull();
     await fixture.close();
   });
@@ -68,10 +73,16 @@ describe("extension on the inbox fixture", () => {
     expect(await actions(page)).toEqual(["click:Archive"]);
   });
 
-  it("marks read with Outlook's Shift+I shortcut", async () => {
+  it("marks an unread message read with Outlook's Read / Unread button", async () => {
     await page.keyboard.press(".");
     await page.keyboard.press("r");
-    expect(await actions(page)).toEqual(["key:shift+I"]);
+    expect(await actions(page)).toEqual(["click:Read / Unread"]);
+  });
+
+  it("leaves an already-unread message alone on mark unread", async () => {
+    await page.keyboard.press(".");
+    await page.keyboard.press("u");
+    expect(await actions(page)).toEqual([]);
   });
 
   it("leaves typing in the search box alone", async () => {
@@ -86,6 +97,13 @@ describe("extension on the inbox fixture", () => {
     await page.keyboard.type("arch");
     await page.keyboard.press("Enter");
     expect(await actions(page)).toEqual(["click:archive"]);
+  });
+
+  it("switches to Calendar through the palette", async () => {
+    await page.keyboard.press("g");
+    await page.keyboard.type("cal");
+    await page.keyboard.press("Enter");
+    expect(await actions(page)).toEqual(["click:Calendar"]);
   });
 
   it("keeps palette keystrokes away from the page and the keymap", async () => {

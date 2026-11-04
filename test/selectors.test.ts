@@ -4,11 +4,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   brokenEntries,
   healthCheck,
+  isUnreadRow,
   outlookColorScheme,
   readFolderTree,
   resolve,
   resolveAll,
   SELECTORS,
+  selectedRows,
   tagElements,
 } from "../src/selectors.ts";
 
@@ -54,6 +56,13 @@ describe("selector registry", () => {
       expect(names).toContain("Archive");
       expect(names.filter((n) => n === "Inbox")).toHaveLength(1);
       expect(names.some((n) => /items/.test(n))).toBe(false);
+    });
+
+    it("reads which rows are selected and unread", () => {
+      const [selected] = selectedRows();
+      expect(selectedRows()).toHaveLength(1);
+      expect(selected && isUnreadRow(selected)).toBe(true);
+      expect(resolveAll("messageRow").filter(isUnreadRow)).toHaveLength(1);
     });
 
     it("reads Outlook's colour scheme", () => {

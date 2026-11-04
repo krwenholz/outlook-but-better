@@ -82,6 +82,12 @@ describe("fake text", () => {
     expect(isUiText("Design & Make Conference")).toBe(false);
   });
 
+  it("keeps the state words that start a message row's label", () => {
+    const faked = fakeText("Unread Has attachments Merger plans for Q3");
+    expect(faked.startsWith("Unread Has attachments ")).toBe(true);
+    expect(faked).not.toContain("Merger");
+  });
+
   it("masks every digit of phone numbers, not just the long groups", () => {
     const faked = fakeText("Call +44 (0)121 766 9274 or 555-867-5309");
     expect(faked).not.toMatch(/121|766|9274|867|5309/);

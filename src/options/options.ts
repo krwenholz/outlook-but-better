@@ -7,6 +7,9 @@ import {
   saveSetting,
 } from "../settings.ts";
 
+/** Look first: it is what people change most, and this page doubles as the toolbar popup. */
+const GROUP_ORDER = ["Look", "Keyboard", "Declutter", "General"];
+
 function section(form: HTMLElement, title: string): void {
   const heading = document.createElement("h2");
   heading.textContent = title;
@@ -19,7 +22,7 @@ async function render(): Promise<void> {
   const settings = await loadSettings();
   const groups = Map.groupBy(FEATURE_IDS, (id): string => FEATURES[id].group);
   const choiceGroups = Map.groupBy(CHOICE_IDS, (id): string => CHOICES[id].group);
-  for (const group of new Set([...groups.keys(), ...choiceGroups.keys()])) {
+  for (const group of GROUP_ORDER) {
     section(form, group);
     for (const id of choiceGroups.get(group) ?? []) {
       const label = document.createElement("label");

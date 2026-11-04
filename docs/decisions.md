@@ -2,6 +2,26 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-04: No synthetic keystrokes; read/unread drives the button
+
+On the live site, `. u` (dispatching Outlook's Gmail-mode Shift+U) did nothing, so Overlook no
+longer sends keystrokes at all. Mark read/unread click the ribbon's Read / Unread toggle, and
+only when the selected rows (judged by the "Unread" that starts their labels) aren't already in
+the wanted state. Drive actions show a toast when their button is missing instead of falling
+back to a key.
+
+## 2026-11-04: Health check waits for the page to settle
+
+The app rail renders after the message list, so the first live check reported its buttons
+missing. The check now runs a second after Outlook is ready, re-checks a miss after 3s and 10s,
+reports only the final result, and skips non-mail views (Calendar, People).
+
+## 2026-11-04: Options in the toolbar popup; apps in the `g` palette
+
+The options page doubles as the toolbar popup (`action.default_popup`; no new permission).
+Mail, Calendar and People are listed in the `g` palette so switching apps is `g` "cal" Enter;
+`Shift+G` then `m`/`c`/`a` still work.
+
 ## 2026-11-02: No pin binding
 
 Kyle doesn't use Fastmail's pin, so `s` is unbound rather than mapped to Outlook's Pin or Flag.

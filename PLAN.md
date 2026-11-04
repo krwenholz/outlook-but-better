@@ -77,30 +77,30 @@ For "go to", selecting a folder clicks it in the folder pane. For "move", select
 
 This is the target binding set. Kyle should confirm it against his own Fastmail muscle memory before Phase 2, since some of these come from Fastmail's documentation rather than from watching him use it. The mechanism column is filled in during the Phase 1 spike.
 
-| Key                           | Action                                      | Context       | Mechanism                                |
-| ----------------------------- | ------------------------------------------- | ------------- | ---------------------------------------- |
-| `c`                           | Compose                                     | Anywhere      | Pass through (Outlook `C`)               |
-| `/`                           | Focus search                                | Anywhere      | Pass through                             |
-| `?`                           | Show Overlook's shortcut help               | Anywhere      | Extension overlay                        |
-| `Esc`                         | Close, cancel, or return to list            | Anywhere      | Pass through                             |
-| `j` / `k`                     | Next / previous conversation                | List, reading | Pass through                             |
-| `o` or `Enter`                | Open conversation                           | List          | Pass through                             |
-| `x`                           | Select or deselect                          | List          | Pass through                             |
-| `Shift+X`                     | Select range since last selection           | List          | Likely extension logic                   |
-| `* A` / `* N`                 | Select all / none                           | List          | Not yet                                  |
-| `y`                           | Archive                                     | List, reading | Drive Archive button, else `E`           |
-| `]` / `[`                     | Archive, then open previous / next          | Reading       | Composite                                |
-| `d`                           | Delete                                      | List, reading | Drive Delete button, else `#`            |
-| `!`                           | Report spam / junk                          | List, reading | Pass through (unverified)                |
-| `m`                           | Move to folder (palette)                    | List, reading | Drive Outlook's Move to picker, else `V` |
-| `g`                           | Go to folder (palette)                      | List, reading | Palette                                  |
-| `b`                           | Snooze                                      | List, reading | Pass through (Outlook `B`)               |
-| `s`                           | Toggle pin / flag                           | List, reading | Dropped (not wanted)                     |
-| `. R` / `. U`                 | Mark read / unread                          | List, reading | Translate to `⇧I` / `⇧U`                 |
-| `r` / `a` / `f`               | Reply / reply all / forward                 | Reading       | Pass through                             |
-| `z`                           | Undo                                        | Anywhere      | Drive Undo button                        |
-| `u`                           | Refresh                                     | Anywhere      | Drive Sync button                        |
-| `Shift+G M` / `C` / `A` / `S` | Go to Mail / Calendar / Contacts / Settings | Anywhere      | Drive app rail / Settings                |
+| Key                           | Action                                      | Context       | Mechanism                                     |
+| ----------------------------- | ------------------------------------------- | ------------- | --------------------------------------------- |
+| `c`                           | Compose                                     | Anywhere      | Pass through (Outlook `C`)                    |
+| `/`                           | Focus search                                | Anywhere      | Pass through                                  |
+| `?`                           | Show Overlook's shortcut help               | Anywhere      | Extension overlay                             |
+| `Esc`                         | Close, cancel, or return to list            | Anywhere      | Pass through                                  |
+| `j` / `k`                     | Next / previous conversation                | List, reading | Pass through                                  |
+| `o` or `Enter`                | Open conversation                           | List          | Pass through                                  |
+| `x`                           | Select or deselect                          | List          | Pass through                                  |
+| `Shift+X`                     | Select range since last selection           | List          | Likely extension logic                        |
+| `* A` / `* N`                 | Select all / none                           | List          | Not yet                                       |
+| `y`                           | Archive                                     | List, reading | Drive Archive button, else `E`                |
+| `]` / `[`                     | Archive, then open previous / next          | Reading       | Composite                                     |
+| `d`                           | Delete                                      | List, reading | Drive Delete button, else `#`                 |
+| `!`                           | Report spam / junk                          | List, reading | Pass through (unverified)                     |
+| `m`                           | Move to folder (palette)                    | List, reading | Drive Outlook's Move to picker, else `V`      |
+| `g`                           | Go to folder (palette)                      | List, reading | Palette (folders plus Mail, Calendar, People) |
+| `b`                           | Snooze                                      | List, reading | Pass through (Outlook `B`)                    |
+| `s`                           | Toggle pin / flag                           | List, reading | Dropped (not wanted)                          |
+| `. R` / `. U`                 | Mark read / unread                          | List, reading | Drive Read / Unread toggle by row state       |
+| `r` / `a` / `f`               | Reply / reply all / forward                 | Reading       | Pass through                                  |
+| `z`                           | Undo                                        | Anywhere      | Drive Undo button                             |
+| `u`                           | Refresh                                     | Anywhere      | Drive Sync button                             |
+| `Shift+G M` / `C` / `A` / `S` | Go to Mail / Calendar / Contacts / Settings | Anywhere      | Drive app rail / Settings                     |
 
 ## Settings-first checklist (do before writing code)
 

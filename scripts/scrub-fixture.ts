@@ -171,10 +171,30 @@ function maskPhones(text: string): string {
   });
 }
 
+/**
+ * State words Outlook puts at the start of a message row's label ("Unread Has attachments
+ * Quarterly numbers…"). They identify no one, and Overlook reads them (isUnreadRow).
+ */
+const ROW_STATES = [
+  "Unread",
+  "Has attachments",
+  "Flagged",
+  "Pinned",
+  "Replied",
+  "Forwarded",
+  "Collapsed",
+  "Expanded",
+  "Important",
+  "Meeting start time",
+];
+const LEADING_STATES = new RegExp(`^(?:(?:${ROW_STATES.join("|")})\\s+)+`);
+
 export function fakeText(text: string): string {
   const masked = maskPhones(text);
   if (isUiText(masked)) return masked;
-  return masked.replace(EMAIL, "someone@example.com").replace(WORD, fakeWord);
+  const states = masked.match(LEADING_STATES)?.[0] ?? "";
+  const rest = masked.slice(states.length);
+  return states + rest.replace(EMAIL, "someone@example.com").replace(WORD, fakeWord);
 }
 
 /**

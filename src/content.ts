@@ -6,6 +6,7 @@ import { DEFAULT_TIMEOUT_MS, keyFromEvent, SequenceEngine } from "./keymap/engin
 import { currentContext, execute } from "./keymap/execute.ts";
 import {
   brokenEntries,
+  type HealthResult,
   healthCheck,
   outlookColorScheme,
   resolve,
@@ -16,6 +17,9 @@ import { isFromOverlay, isModalOpen, showHealthBadge, showHint } from "./ui/over
 
 const LOG = "[overlook]";
 const APP_READY_TIMEOUT_MS = 20_000;
+const HEALTH_SETTLE_MS = 1_000;
+/** Waits between re-checks of a failed health check before it is reported. */
+const HEALTH_RETRY_MS = [3_000, 10_000];
 
 let settings: Settings;
 let healthDismissed = false;
@@ -35,10 +39,10 @@ function syncColorScheme(): void {
   }
 }
 
-function runHealthCheck(): void {
-  const results = healthCheck();
+function reportHealth(results: HealthResult[]): void {
   const broken = brokenEntries(results);
   const fallbacks = results.filter((r) => r.candidate > 0).map((r) => r.name);
+  document.documentElement.dataset.overlookHealth = broken.length ? "broken" : "ok";
   console.groupCollapsed(`${LOG} health: ${broken.length ? `${broken.length} broken` : "ok"}`);
   console.table(results);
   console.groupEnd();
@@ -49,6 +53,25 @@ function runHealthCheck(): void {
       healthDismissed = true;
     });
   }
+}
+
+let healthTimer: ReturnType<typeof setTimeout> | undefined;
+
+/**
+ * Checks the registry once Outlook has settled. Parts of the page (the app rail, for one) render
+ * after the message list, so a miss is re-checked a few times before it is reported.
+ */
+function scheduleHealthCheck(): void {
+  clearTimeout(healthTimer);
+  // Only the mail views are surveyed; Calendar and People legitimately lack mail elements.
+  if (!location.pathname.includes("/mail")) return;
+  const attempt = (n: number) => {
+    const results = healthCheck();
+    const retryIn = HEALTH_RETRY_MS[n];
+    if (brokenEntries(results).length === 0 || retryIn === undefined) reportHealth(results);
+    else healthTimer = setTimeout(() => attempt(n + 1), retryIn);
+  };
+  healthTimer = setTimeout(() => attempt(0), HEALTH_SETTLE_MS);
 }
 
 /** Resolves once Outlook's mail UI has rendered, or after a timeout so the check still reports. */
@@ -81,7 +104,7 @@ function watchPage(): void {
       syncColorScheme();
       if (location.href !== lastUrl) {
         lastUrl = location.href;
-        runHealthCheck();
+        scheduleHealthCheck();
       }
     });
   }).observe(document.body, { childList: true, subtree: true });
@@ -129,7 +152,7 @@ async function main(): Promise<void> {
   mountKeymap();
   await whenAppReady();
   tagElements();
-  runHealthCheck();
+  scheduleHealthCheck();
   watchPage();
 }
 
