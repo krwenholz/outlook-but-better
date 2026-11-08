@@ -1,6 +1,7 @@
-import { readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import type { BrowserContext, Page } from "playwright";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CAPTURE_MESSAGE } from "../../src/capture.ts";
 import { actions, launch, openFixture, openOptions, recordActions } from "./harness.ts";
 
 let context: BrowserContext;
@@ -125,6 +126,31 @@ describe("extension on the inbox fixture", () => {
     await page.keyboard.type("yj");
     await page.keyboard.press("Escape");
     expect(await actions(page)).toEqual([]);
+  });
+
+  it("saves a stock-Outlook capture when the popup asks", async () => {
+    // The popup only asks the active tab; earlier tests left theirs open, and Chrome blocks a
+    // burst of automatic downloads from one origin, so leave just this one.
+    for (const other of context.pages()) if (other !== page) await other.close();
+    const options = await openOptions(context);
+    const download = page.waitForEvent("download");
+    // Stands in for the popup's button: asks every tab; only the Outlook one answers.
+    await options.evaluate(async (type) => {
+      for (const tab of await chrome.tabs.query({})) {
+        if (tab.id === undefined) continue;
+        try {
+          await chrome.tabs.sendMessage(tab.id, { type });
+        } catch {}
+      }
+    }, CAPTURE_MESSAGE);
+    const file = await download;
+    expect(file.suggestedFilename()).toMatch(/^obb-capture-\d{12}\.html$/);
+    const html = await readFile((await file.path()) ?? "", "utf8");
+    expect(html).toContain('id="obb-capture-meta"');
+    expect(html).toContain('id="MailList"');
+    expect(html).not.toContain("overlook-root");
+    expect(html).not.toMatch(/data-overlook(?!-runtime)/);
+    await options.close();
   });
 
   it("swallows shortcuts while the help overlay is open", async () => {

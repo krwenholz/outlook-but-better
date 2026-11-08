@@ -2,6 +2,16 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-08: Developer capture in the popup
+
+The popup's collapsed Developer section has "Save page capture", replacing the DevTools
+snippet as the way to hand a page over for fixing or testing. It sends a message to the active
+tab's content script (already on Outlook's hosts, so no new permission: neither `tabs` nor
+`activeTab`), which serialises a copy of the page without OBB's marks and downloads it through
+a blob link. Nothing is uploaded. The file includes a JSON block (OBB version, settings, health
+results, a route trimmed to two segments) that the scrubber drops with the other scripts. The
+capture is real mail, so the UI says so and docs keep it in gitignored `fixtures-raw/`.
+
 ## 2026-11-05: Installs and updates from the `dist` branch
 
 Chrome only auto-updates extensions from the Web Store or ones force-installed by policy, so an

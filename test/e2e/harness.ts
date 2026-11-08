@@ -100,6 +100,7 @@ export async function recordActions(page: Page): Promise<void> {
       "click",
       (e) => {
         const el = e.target as Element;
+        if (el.closest("a[download]")) return; // OBB's capture download: let it through
         log.push(`click:${el.getAttribute("aria-label") ?? el.getAttribute("data-folder-name")}`);
         e.preventDefault();
       },

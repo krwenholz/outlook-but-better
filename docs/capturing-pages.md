@@ -4,11 +4,21 @@ Fixtures are scrubbed snapshots of real Outlook pages (`test/fixtures/`). Tests 
 run against them, so a fresh capture is the way to pick up Outlook UI changes without a live
 session.
 
-## Best: the DevTools snippet (keeps runtime styles)
+## Best: the popup's Developer button
 
-Chrome's "Save page as…" loses the styles Fluent injects at runtime, so saved pages render
-half-styled. Instead, with Outlook open in the state you want (a message selected, a menu open,
-dark mode…), open DevTools → Console, paste this, and press Enter. It downloads one HTML file.
+With Outlook open in the state you want (a message selected, a menu open, dark mode…), click the
+OBB toolbar icon → **Developer** → **Save page capture**. It saves `obb-capture-<time>.html` to
+Downloads. The file is stock Outlook (OBB's own marks are left out), keeps Outlook's runtime
+styles, and carries a small JSON block with the OBB version, your settings and the selector
+health results, which is useful when something broke.
+
+The capture holds your real mail and never leaves your computer by itself. Hand it only to
+whoever is helping fix OBB, and put it in `fixtures-raw/` (gitignored), never in git.
+
+## Fallback: the DevTools snippet
+
+If OBB isn't running (or is what's broken), paste this into the DevTools console on Outlook. It
+downloads the same kind of file, minus the metadata.
 
 ```js
 (() => {
@@ -29,7 +39,7 @@ dark mode…), open DevTools → Console, paste this, and press Enter. It downlo
 })();
 ```
 
-"Save page as… → Webpage, Complete" also works; you get the `_files` folder too.
+"Save page as… → Webpage, Complete" also works but loses Outlook's runtime styles.
 
 ## Scrub and commit
 

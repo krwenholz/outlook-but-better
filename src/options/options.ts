@@ -1,5 +1,6 @@
 // The options page, also the toolbar popup. Changes save immediately and apply live in Outlook.
 
+import { CAPTURE_MESSAGE } from "../capture.ts";
 import {
   CHOICES,
   type ChoiceId,
@@ -172,6 +173,52 @@ function toggles(ids: FeatureId[], settings: Settings): HTMLElement {
 const featuresIn = (group: string) => FEATURE_IDS.filter((id) => FEATURES[id].group === group);
 
 let declutterOpen = false;
+let developerOpen = false;
+let captureStatus = "";
+
+/** Asks the Outlook tab in front to save a capture of itself. No permission needed: the content
+ * script that answers is already on Outlook's hosts. */
+async function requestCapture(): Promise<string> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab?.id === undefined) return "Open an Outlook tab first.";
+  try {
+    const reply = (await chrome.tabs.sendMessage(tab.id, { type: CAPTURE_MESSAGE })) as {
+      name: string;
+      bytes: number;
+    };
+    return `Saved ${reply.name} (${Math.round(reply.bytes / 1024)} KB) to Downloads.`;
+  } catch {
+    return "No answer. Use this on an Outlook tab, and reload that tab if OBB was just updated.";
+  }
+}
+
+function developerSection(): HTMLElement {
+  const status = el("p", { class: "hint", role: "status" }, captureStatus);
+  const button = el("button", { type: "button", class: "pill" }, "Save page capture");
+  button.addEventListener("click", () => {
+    void requestCapture().then((text) => {
+      captureStatus = text;
+      status.textContent = text;
+    });
+  });
+  const details = el(
+    "details",
+    {},
+    el("summary", {}, "Developer"),
+    el(
+      "p",
+      { class: "hint" },
+      "Saves this Outlook tab as an HTML file for fixing or testing OBB. It contains your real mail and stays on this computer; share it only with whoever is helping you fix OBB.",
+    ),
+    button,
+    status,
+  );
+  details.open = developerOpen;
+  details.addEventListener("toggle", () => {
+    developerOpen = details.open;
+  });
+  return el("section", {}, details);
+}
 
 function render(settings: Settings): void {
   applyTheme(settings);
@@ -214,6 +261,7 @@ function render(settings: Settings): void {
     section("Keyboard", toggles(featuresIn("Keyboard"), settings)),
     el("section", {}, details),
     section("General", toggles(featuresIn("General"), settings)),
+    developerSection(),
   );
 }
 

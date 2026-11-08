@@ -1,5 +1,6 @@
 // Entry point: applies settings, tags elements for CSS, runs the health check, mounts the keymap.
 
+import { CAPTURE_MESSAGE, capturePage } from "./capture.ts";
 import { ACTIONS } from "./keymap/actions.ts";
 import { BINDINGS } from "./keymap/bindings.ts";
 import { DEFAULT_TIMEOUT_MS, keyFromEvent, SequenceEngine } from "./keymap/engine.ts";
@@ -171,7 +172,25 @@ function mountKeymap(): void {
   );
 }
 
+/** Developer tools: the popup asks this tab to save a capture of the page (src/capture.ts). */
+function serveCaptureRequests(): void {
+  chrome.runtime.onMessage.addListener((message, _sender, reply) => {
+    if (message?.type !== CAPTURE_MESSAGE) return;
+    const { html, name } = capturePage(document, location, chrome.runtime.getManifest().version);
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    reply({ ok: true, name, bytes: html.length });
+  });
+}
+
 async function main(): Promise<void> {
+  serveCaptureRequests();
   applySettings(await loadSettings());
   onSettingsChanged(applySettings);
   mountKeymap();
