@@ -737,7 +737,8 @@ footer {
   color: var(--ol-muted);
 }
 
-footer button {
+footer button,
+.pill {
   all: unset;
   cursor: pointer;
   padding: 5px 12px;
@@ -747,7 +748,8 @@ footer button {
   font-weight: 600;
 }
 
-footer button:hover {
+footer button:hover,
+.pill:hover {
   background: var(--ol-hover);
 }
 
