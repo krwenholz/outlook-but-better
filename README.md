@@ -73,7 +73,8 @@ Accessibility) first; OBB builds on them.
 
 | Keys                                 | Does                                           |
 | ------------------------------------ | ---------------------------------------------- |
-| `j` / `k`                            | Next / previous conversation                   |
+| `j` / `k`                            | Next / previous conversation (ticks stay)      |
+| `x`                                  | Tick the message under the cursor              |
 | `y` / `d`                            | Archive / delete                               |
 | `m`                                  | Move to folder (Outlook's picker, with search) |
 | `g`                                  | Go to a folder, or Mail, Calendar, People      |

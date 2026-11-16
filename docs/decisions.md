@@ -2,6 +2,17 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-16: x / j / k keep multi-selections (Fastmail-style cursor)
+
+In Outlook's Gmail mode `j`/`k` select the next row, replacing the selection, so `x j x j`
+ended with one row. OBB now takes over just these keys (setting `multiSelect`, on by default):
+`x` clicks the cursor row's tick box (`aria-checked` says what is ticked), and `j`/`k` move
+focus to the neighbouring row without selecting it while any row is ticked. With nothing ticked
+they pass through to Outlook, so single-message reading is unchanged. The cursor is the row
+holding focus, else the roving-tabindex row, else the selected one.
+Unverified against live Outlook (fixtures run none of its scripts): if Outlook selects on
+focus, ticks would still be lost; the setting turns it off.
+
 ## 2026-11-16: Never hide what Outlook's keyboard or selection logic touches
 
 Two live bugs, one lesson. From a popup capture (v0.1.5, Paper palette, Fastmail layout):

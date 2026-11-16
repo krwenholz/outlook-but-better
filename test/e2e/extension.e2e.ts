@@ -126,6 +126,53 @@ describe("extension on the inbox fixture", () => {
     expect(await actions(page)).toEqual(["click:Archive"]);
   });
 
+  it("x ticks the row; j and k then move the cursor without dropping ticks", async () => {
+    const cursorIndex = () =>
+      page.evaluate(() => {
+        const rows = [...document.querySelectorAll('[role="option"][data-convid]')];
+        return rows.findIndex((row) => row.contains(document.activeElement));
+      });
+    const ticked = () =>
+      page.evaluate(() => {
+        const rows = [...document.querySelectorAll('[role="option"][data-convid]')];
+        return rows.flatMap((row, i) =>
+          row.querySelector('[role="checkbox"]')?.getAttribute("aria-checked") === "true"
+            ? [i]
+            : [],
+        );
+      });
+    // The fixture has no Outlook scripts, so play Outlook's part: a click on a tick box ticks it.
+    await page.evaluate(() => {
+      document.addEventListener("click", (e) => {
+        const box = (e.target as Element).closest('[role="checkbox"]');
+        if (box)
+          box.setAttribute("aria-checked", String(box.getAttribute("aria-checked") !== "true"));
+      });
+    });
+
+    await page.keyboard.press("x"); // the cursor starts on the selected (first) row
+    expect(await ticked()).toEqual([0]);
+    await page.keyboard.press("j");
+    expect(await cursorIndex()).toBe(1);
+    await page.keyboard.press("x");
+    expect(await ticked()).toEqual([0, 1]);
+    await page.keyboard.press("j");
+    await page.keyboard.press("k");
+    expect(await cursorIndex()).toBe(1);
+    expect(await ticked()).toEqual([0, 1]); // moving never touched the ticks
+    expect((await actions(page)).every((a) => a === "click:Select a conversation")).toBe(true);
+  });
+
+  it("leaves j/k to Outlook while nothing is ticked", async () => {
+    await page.keyboard.press("j");
+    const moved = await page.evaluate(() =>
+      [...document.querySelectorAll('[role="option"]')].some((r) =>
+        r.contains(document.activeElement),
+      ),
+    );
+    expect(moved).toBe(false); // OBB did nothing; in Outlook its own j would take it from here
+  });
+
   it("marks an unread message read with Outlook's Read / Unread button", async () => {
     await page.keyboard.press(".");
     await page.keyboard.press("r");

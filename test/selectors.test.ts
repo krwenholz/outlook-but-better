@@ -3,12 +3,15 @@ import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   brokenEntries,
+  checkedRows,
+  cursorRow,
   healthCheck,
   isUnreadRow,
   outlookColorScheme,
   readFolderTree,
   resolve,
   resolveAll,
+  rowCheckbox,
   SELECTORS,
   selectedRows,
   tagElements,
@@ -63,6 +66,17 @@ describe("selector registry", () => {
       expect(selectedRows()).toHaveLength(1);
       expect(selected && isUnreadRow(selected)).toBe(true);
       expect(resolveAll("messageRow").filter(isUnreadRow)).toHaveLength(1);
+    });
+
+    it("finds ticked rows and the row under the keyboard cursor", () => {
+      expect(checkedRows()).toHaveLength(0);
+      const rows = resolveAll("messageRow") as HTMLElement[];
+      rowCheckbox(rows[2] as Element)?.setAttribute("aria-checked", "true");
+      expect(checkedRows()).toEqual([rows[2]]);
+      // No focus in the list: the selected (roving tabindex 0) row is the cursor.
+      expect(cursorRow()).toBe(rows[0]);
+      rows[3]?.focus();
+      expect(cursorRow()).toBe(rows[3]);
     });
 
     it("reads Outlook's colour scheme", () => {

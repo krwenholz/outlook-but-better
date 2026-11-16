@@ -164,7 +164,8 @@ function mountKeymap(): void {
       clearTimeout(hintTimer);
       if (result.kind === "pending")
         hintTimer = setTimeout(() => showHint(null), DEFAULT_TIMEOUT_MS);
-      if (result.kind === "match" && !execute(result.action)) return;
+      if (result.kind === "match" && !execute(result.action, { multiSelect: settings.multiSelect }))
+        return;
       event.preventDefault();
       event.stopImmediatePropagation();
     },

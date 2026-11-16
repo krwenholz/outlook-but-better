@@ -31,6 +31,11 @@ export const FEATURES = {
     default: true,
   },
   keymap: { label: "Fastmail-style keyboard shortcuts", group: "Keyboard", default: true },
+  multiSelect: {
+    label: "x ticks a message; j and k move without losing ticks",
+    group: "Keyboard",
+    default: true,
+  },
   "hide-upsell": { label: "Upgrade and 'try the new…' banners", group: "Declutter", default: true },
   "hide-app-banners": {
     label: "Notices across the top of Outlook (pop-up, sign-in and storage reminders)",

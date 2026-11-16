@@ -7,7 +7,8 @@
 //                 the live site in Nov 2026, so there is no keystroke strategy.)
 //   toggle      – click a toggle button (Read / Unread) only if the selection isn't already in
 //                 the wanted state.
-//   extension   – OBB's own UI (palette, help).
+//   extension   – OBB's own behaviour (palette, help, the multi-select cursor). A command may
+//                 decline, in which case the key passes through to Outlook.
 //   todo        – not decided yet; the key is swallowed and a hint says so.
 //
 // Outlook's Gmail-mode keys come from its own ribbon tooltips in the Oct 2026 capture:
@@ -16,7 +17,12 @@
 
 import type { SelectorName } from "../selectors.ts";
 
-export type ExtensionCommand = "help" | "palette-go";
+export type ExtensionCommand =
+  | "help"
+  | "palette-go"
+  | "toggle-select"
+  | "cursor-next"
+  | "cursor-previous";
 
 export type Strategy =
   | { kind: "passthrough" }
@@ -44,10 +50,10 @@ export const ACTIONS = {
   compose: { description: "Compose", strategy: passthrough },
   search: { description: "Focus search", strategy: passthrough },
   help: { description: "Show keyboard shortcuts", strategy: extension("help") },
-  next: { description: "Next conversation", strategy: passthrough },
-  previous: { description: "Previous conversation", strategy: passthrough },
+  next: { description: "Next conversation", strategy: extension("cursor-next") },
+  previous: { description: "Previous conversation", strategy: extension("cursor-previous") },
   open: { description: "Open conversation", strategy: passthrough },
-  select: { description: "Select or deselect", strategy: passthrough },
+  select: { description: "Select or deselect", strategy: extension("toggle-select") },
   selectRange: { description: "Select range since last selection", strategy: todo },
   selectAll: { description: "Select all", strategy: todo },
   selectNone: { description: "Select none", strategy: todo },

@@ -352,6 +352,33 @@ export function selectedRows(root: ParentNode = document): Element[] {
   );
 }
 
+/** A row's tick box ("Select a conversation"); its aria-checked says whether it is ticked. */
+export function rowCheckbox(row: Element): HTMLElement | null {
+  return row.querySelector<HTMLElement>('[role="checkbox"]');
+}
+
+/** Rows whose tick box is ticked: the multi-selection, as opposed to the single open row. */
+export function checkedRows(root: ParentNode = document): Element[] {
+  return resolveAll("messageRow", root).filter(
+    (row) => rowCheckbox(row)?.getAttribute("aria-checked") === "true",
+  );
+}
+
+/**
+ * The row the keyboard cursor is on: the one holding focus, else Outlook's roving-tabindex row,
+ * else the selected one.
+ */
+export function cursorRow(root: Document = document): Element | null {
+  const rows = resolveAll("messageRow", root);
+  const active = root.activeElement;
+  return (
+    rows.find((row) => active && row.contains(active)) ??
+    rows.find((row) => row.getAttribute("tabindex") === "0") ??
+    selectedRows(root)[0] ??
+    null
+  );
+}
+
 /** Outlook starts an unread row's accessible name with "Unread" (English UI). */
 export function isUnreadRow(row: Element): boolean {
   return /^Unread\b/.test(row.getAttribute("aria-label") ?? "");
