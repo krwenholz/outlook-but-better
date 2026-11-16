@@ -69,11 +69,6 @@ export const FEATURES = {
     group: "Declutter",
     default: false,
   },
-  "hide-group-headers": {
-    label: "Date group headers ('This Month') in the message list",
-    group: "Declutter",
-    default: false,
-  },
   "hide-focused-tabs": { label: "Focused / Other tabs", group: "Declutter", default: false },
   "hide-ribbon-tabs": {
     label: "Ribbon tabs (Home, View, Help)",

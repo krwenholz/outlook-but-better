@@ -83,6 +83,44 @@ describe("extension on the inbox fixture", () => {
     for (const layout of ["calm", "fastmail", "focus"]) expect(await listWidth(layout)).toBe(stock);
   });
 
+  it("keeps the date group headers visible: j/k steps through them", async () => {
+    const hiddenHeaders = (layout: string) =>
+      page.evaluate((l) => {
+        document.documentElement.dataset.overlookLayout = l;
+        document.documentElement.dataset.overlookPalette = "solarized";
+        const headers = [...document.querySelectorAll('[data-overlook~="group-header"]')];
+        return {
+          count: headers.length,
+          hidden: headers.filter((h) => !(h as HTMLElement).offsetHeight).length,
+        };
+      }, layout);
+    for (const layout of ["outlook", "calm", "fastmail", "focus"]) {
+      const { count, hidden } = await hiddenHeaders(layout);
+      expect(count, layout).toBeGreaterThan(0);
+      expect(hidden, `${layout}: hidden headers`).toBe(0);
+    }
+  });
+
+  it("lets Outlook swap each avatar for its tick box", async () => {
+    // Outlook shows the tick box instead of the avatar on a selected row (and on hover). A palette
+    // must not force the avatar back, or it sits on top of the box and multi-select breaks.
+    const avatarDisplays = () =>
+      page.evaluate(() => {
+        document.documentElement.dataset.overlookPalette = "paper";
+        const display = (selected: string) => {
+          const row = document.querySelector(`[role="option"][aria-selected="${selected}"]`);
+          const avatar = row?.querySelector('[data-overlook~="row-avatar"]');
+          return avatar ? getComputedStyle(avatar).display : "missing";
+        };
+        return { selected: display("true"), other: display("false") };
+      });
+    await expect.poll(async () => (await avatarDisplays()).other).not.toBe("missing");
+    expect(await avatarDisplays()).toEqual({
+      selected: "none",
+      other: expect.not.stringMatching(/^(none|missing)$/),
+    });
+  });
+
   it("archives by clicking Outlook's own Archive button", async () => {
     await page.keyboard.press("y");
     expect(await actions(page)).toEqual(["click:Archive"]);

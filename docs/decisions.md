@@ -2,6 +2,24 @@
 
 Settled choices and why, so they are not relitigated. Newest first.
 
+## 2026-11-16: Never hide what Outlook's keyboard or selection logic touches
+
+Two live bugs, one lesson. From a popup capture (v0.1.5, Paper palette, Fastmail layout):
+- **j/k needed two presses.** The Fastmail layout hid the date group headers with
+  `display: none`. Those headers are stops in Outlook's keyboard order, so a press landed on an
+  invisible item. Headers now stay visible (slim, quiet) in every layout and the
+  `hide-group-headers` toggle is gone. This is the likely cause; it can't be reproduced offline
+  because fixtures carry no Outlook scripts, so a regression test checks that no layout hides
+  them.
+- **Multi-select misbehaved.** Outlook shows a row's tick box instead of its avatar through
+  `--personaDisplay` / `--checkboxDisplay` (the avatar sits inside the checkbox element). Palette
+  styling forced `display: inline-flex !important` on the avatar, keeping it over the box. It now
+  uses `display: var(--personaDisplay, inline-flex)`, so Outlook's own swap still works. A test
+  checks the selected row's avatar is hidden.
+
+Rule going forward: restyle freely, but don't override `display` on anything inside a row, and
+don't hide elements the keyboard can focus. Prefer reading Outlook's variables to replacing them.
+
 ## 2026-11-08: Developer capture in the popup
 
 The popup's collapsed Developer section has "Save page capture", replacing the DevTools
