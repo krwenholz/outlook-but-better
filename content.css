@@ -481,7 +481,9 @@ html[data-overlook-palette]:not([data-overlook-palette="outlook"])
 }
 
 html[data-overlook-palette]:not([data-overlook-palette="outlook"]) [data-overlook~="row-avatar"] {
-  display: inline-flex !important;
+  /* Outlook swaps the avatar for the row's tick box through --personaDisplay (hover, selection).
+     Forcing a display here kept the avatar on top of the box and broke multi-select. */
+  display: var(--personaDisplay, inline-flex) !important;
   align-items: center !important;
   justify-content: center !important;
   width: 32px !important;
@@ -540,9 +542,10 @@ html[data-overlook-layout="calm"] [data-overlook~="message-row"] {
 }
 
 /* --- fastmail: list first, sidebar with compose, flat toolbar --- */
+/* Not the group headers: they are stops in Outlook's keyboard order, so hiding them makes j/k
+   land on an invisible item and need a second press. */
 html[data-overlook-layout="fastmail"] [data-overlook~="ribbon-tabs"],
-html[data-overlook-layout="fastmail"] [data-overlook~="focused-tabs"],
-html[data-overlook-layout="fastmail"] [data-overlook~="group-header"] {
+html[data-overlook-layout="fastmail"] [data-overlook~="focused-tabs"] {
   display: none !important;
 }
 
@@ -596,7 +599,6 @@ html[data-overlook-layout="focus"] [data-overlook~="message-row"] {
 [data-overlook-features~="hide-external-tag"] [data-overlook~="external-tag"],
 [data-overlook-features~="hide-row-actions"] [data-overlook~="row-action"],
 [data-overlook-features~="hide-avatars"] [data-overlook~="row-avatar"],
-[data-overlook-features~="hide-group-headers"] [data-overlook~="group-header"],
 [data-overlook-features~="hide-focused-tabs"] [data-overlook~="focused-tabs"],
 [data-overlook-features~="hide-ribbon-tabs"] [data-overlook~="ribbon-tabs"],
 [data-overlook-features~="hide-app-rail"] [data-overlook~="app-rail"],
